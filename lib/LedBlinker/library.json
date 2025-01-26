@@ -1,0 +1,23 @@
+{
+    "name": "LedBlinker",
+    "version": "1.0.0",
+    "description": "Simple Arduino library to control LEDs in a non-blocking way. Especially designed for making status blinks with built-in LEDs.",
+    "keywords": ["Arduino", "LED", "Blinker"],
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/username/hello-world.git"
+    },
+    "authors": [
+        {
+            "name": "Gergely Barna",
+            "email": "barna.gergely.hu@gmail.com",
+            "url": "https://www.linkedin.com/in/gergely-barna-hu/",
+            "maintainer": true
+        }
+    ],
+    "license": "MIT",
+    "homepage": "https://www.helloworld.org/",
+    "dependencies": {},
+    "frameworks": ["arduino"],
+    "platforms": "*"
+}

@@ -1,0 +1,27 @@
+#######################################
+# Syntax Coloring Map For LedBlinker
+#######################################
+
+#######################################
+# Datatypes (KEYWORD1)
+#######################################
+LedBlinker	KEYWORD1
+
+
+#######################################
+# Methods and Functions (KEYWORD2)
+#######################################
+blinkContinuously	KEYWORD2
+blink	KEYWORD2
+blinkBlocking	KEYWORD2
+disable	KEYWORD2
+enable	KEYWORD2
+turnOn	KEYWORD2
+turnOff	KEYWORD2
+run	KEYWORD2
+begin	KEYWORD2
+
+
+######################################
+# Constants (LITERAL1)
+######################################
