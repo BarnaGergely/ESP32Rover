@@ -1,0 +1,21 @@
+Label;Part Type;mn;mpn;part number;
+0.9-5V step-up, 600mA 5V;mini boost module;;;https://www.hestore.hu/prod_10039261.html;
+18650 Li-ion battery at least 1A;Battery Holders;;;;
+DRV8833 Motor Driver Module 1.5A 10V;Adafruit DRV8833 DC/Stepper Motor Driver;;;https://www.hestore.hu/prod_10041734.html;
+ESP32 DEVKIT V1 350mAh;DOIT Esp32 DevKit v1 (30 pins long, 11 pins width);;;https://www.hestore.hu/prod_10044679.html;
+HC-SR04 Ultrasonic Distance Sensor;HC-SR04 Ultrasonic Distance Sensor;;;https://www.hestore.hu/prod_10035534.html;
+Toggle switch;Toggle Switch;;;https://www.hestore.hu/prod_10022048.html;
+TP4056 charge, protection module;TP4056;;;https://www.hestore.hu/prod_10042093.html;
+TT DC Motor 3-6V 180mAh;DC Motor;;;https://www.hestore.hu/prod_10035529.html;
+TT DC Motor 3-6V 180mAh;DC Motor;;;;
+
+Amount;Part Type;mn;mpn;part number;
+1;Adafruit DRV8833 DC/Stepper Motor Driver;;;https://www.hestore.hu/prod_10041734.html;
+1;Battery Holders;;;;
+1;DC Motor;;;;
+1;DC Motor;;;https://www.hestore.hu/prod_10035529.html;
+1;DOIT Esp32 DevKit v1 (30 pins long, 11 pins width);;;https://www.hestore.hu/prod_10044679.html;
+1;HC-SR04 Ultrasonic Distance Sensor;;;https://www.hestore.hu/prod_10035534.html;
+1;TP4056;;;https://www.hestore.hu/prod_10042093.html;
+1;Toggle Switch;;;https://www.hestore.hu/prod_10022048.html;
+1;mini boost module;;;https://www.hestore.hu/prod_10039261.html;

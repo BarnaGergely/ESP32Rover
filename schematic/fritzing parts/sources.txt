@@ -1,0 +1,7 @@
+https://forum.fritzing.org/t/esp32-cam-fritzing-part/8517
+https://github.com/adafruit/Fritzing-Library/blob/master/parts/Adafruit%20DRV8833%20DC-Stepper%20Motor%20Driver.fzpz
+https://github.com/cmuphyscomp/16-223-f15/blob/master/support/fritzing-parts/Pololu%205V%20Step-Up%20Regulator.fzpz
+https://forum.fritzing.org/t/tp4056-charger-board/4795/35
+
+https://github.com/AchimPieters/Fritzing-Custom-Parts
+https://github.com/jorgechacblogspot/librerias_fritzing/

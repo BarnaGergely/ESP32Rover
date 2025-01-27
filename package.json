@@ -4,10 +4,12 @@
   "description": "A simple Node.js server that serves files with Gzip compression using Express.",
   "main": "src/gzipTestServer.js",
   "scripts": {
-    "gzipStart": "node web/debug/gzipTestServer.js"
+    "gzipStart": "nodemon web/debug/gzipTestServer.js"
   },
   "dependencies": {
     "express": "^4.21.2",
-    "express-static-gzip": "^2.2.0"
+    "express-static-gzip": "^2.2.0",
+    "nodemon": "^3.1.9",
+    "socket.io": "^4.8.1"
   }
 }

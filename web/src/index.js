@@ -14,7 +14,7 @@ let socket;
 
 // Initialize WebSocket
 function initWebSocket() {
-    socket = new WebSocket('ws://' + location.hostname + ':81'); // Replace with your server's IP and port
+    socket = new WebSocket('ws://127.0.0.1:80/'); // Replace with your server's IP and port
 
     socket.onopen = function() {
         console.log("WebSocket connection opened");
