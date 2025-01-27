@@ -1,0 +1,23 @@
+Label;Part Type;mn;mpn;part number;
+10V 2A DC input;Power plug;;;;
+Ceram Cap;Ceramic Capacitor;;;;
+Ceramic Capacitor;Ceramic Capacitor;;;;
+DRV8833 Motor Driver Module 1.5A 10.8V;Adafruit DRV8833 DC/Stepper Motor Driver;;;https://www.hestore.hu/prod_10041734.html;
+ESP32 DEVKIT V1 350mAh;DOIT Esp32 DevKit v1 (30 pins long, 11 pins width);;;https://www.hestore.hu/prod_10044679.html;
+HC-SR04 Ultrasonic Distance Sensor;HC-SR04 Ultrasonic Distance Sensor;;;https://www.hestore.hu/prod_10035534.html;
+LM7805 replacement 8-30V to 5V 1A voltage regulator;Voltage Regulator - 5V;;;https://www.hestore.hu/prod_10042763.html;
+Low ESR Electrolit Capacitor;Electrolytic Capacitor;;;;
+Toggle switch;Toggle Switch;;;https://www.hestore.hu/prod_10022048.html;
+TT DC Motor 3-6V 180mAh;DC Motor;;;https://www.hestore.hu/prod_10035529.html;
+TT DC Motor 3-6V 180mAh;DC Motor;;;https://www.hestore.hu/prod_10035529.html;
+
+Amount;Part Type;mn;mpn;part number;
+1;Adafruit DRV8833 DC/Stepper Motor Driver;;;https://www.hestore.hu/prod_10041734.html;
+2;Ceramic Capacitor;;;;
+2;DC Motor;;;https://www.hestore.hu/prod_10035529.html;
+1;DOIT Esp32 DevKit v1 (30 pins long, 11 pins width);;;https://www.hestore.hu/prod_10044679.html;
+1;Electrolytic Capacitor;;;;
+1;HC-SR04 Ultrasonic Distance Sensor;;;https://www.hestore.hu/prod_10035534.html;
+1;Power plug;;;;
+1;Toggle Switch;;;https://www.hestore.hu/prod_10022048.html;
+1;Voltage Regulator - 5V;;;https://www.hestore.hu/prod_10042763.html;
