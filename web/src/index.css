@@ -1,3 +1,19 @@
+:root {
+    --clr-bg-1: #f0f0f0; /* main background color */
+    --clr-bg-2: #e0e0e0;
+    --clr-bg-3: #ccc;
+    --clr-bg-joy: radial-gradient(circle, var(--clr-bg-1), var(--clr-bg-3)); /* joystick background color */
+    --clr-bg-cont: linear-gradient(135deg, var(--clr-bg-1), var(--clr-bg-2)); /* container background color */
+    --clr-btn: #28a745; /* button color */
+
+    --clr-success: #28a745; /* success color eg.: connected  */
+    --clr-failed: #dc3545; /* fail color eg.: disconnected */
+
+    --clr-brd-joy: 1px solid #bbb;
+
+    /*TODO: refactor color and other important properties to use vareiable, create dark theme*/
+}
+
 body {
     font-family: 'Arial', sans-serif;
     display: flex;
@@ -7,7 +23,7 @@ body {
     height: 100vh;
     margin: 2px;
     padding: 5px;
-    background-color: #f0f0f0;
+    background-color: var(--clr-bg-1);
     box-sizing: border-box;
 }
 
@@ -17,7 +33,7 @@ body {
     align-items: center;
     gap: 5px; /* Increased gap for better spacing */
     padding: 0px 15px 0px 15px; /* Add padding for inner spacing */
-    background: linear-gradient(135deg, #f0f0f0, #e0e0e0); /* Gradient background */
+    background: var(--clr-bg-cont); /* Gradient background */
     border: 1px solid #ccc; /* Subtle border */
     border-radius: 15px; /* Rounded corners */
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
@@ -29,10 +45,10 @@ body {
     position: relative;
     width: 250px;
     height: 250px;
-    background: radial-gradient(circle, #f0f0f0, #ccc); /* Gradient background */
+    background: var(--clr-bg-joy); /* Gradient background */
     border-radius: 50%;
     box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); /* Subtle shadow */
-    border: 1px solid #bbb; /* Border for a more defined look */
+    border: 1px solid var(--clr-brd-joy); /* Border for a more defined look */
     display: flex;
     justify-content: center;
     align-items: center;
@@ -145,7 +161,7 @@ body {
 .button {
     width: 70px;
     height: 60px;
-    background-color: #28a745;
+    background-color: var(--clr-btn);
     border: none;
     color: white;
     font-size: 16px;
@@ -194,9 +210,9 @@ body {
 }
 
 .status-connected {
-    background-color: #28a745; /* Green background for connected */
+    background-color: var(--clr-success); /* Green background for connected */
 }
 
 .status-disconnected {
-    background-color: #dc3545; /* Red background for disconnected */
+    background-color: var(--clr-failed); /* Red background for disconnected */
 }
