@@ -5,7 +5,7 @@ const slider2 = document.getElementById('slider2');
 const toggleReturn = document.getElementById('toggle-return');
 const statusLabel = document.getElementById('status');
 
-const url = 'ws://192.168.0.112/';
+const url = 'ws://192.168.0.112/';  // Replace with your server's IP and port
 
 let joystickOffset = { x: 0, y: 0 };
 let isDragging = false;
@@ -16,7 +16,7 @@ let socket;
 
 // Initialize WebSocket
 function initWebSocket(url) {
-    socket = new WebSocket(url); // Replace with your server's IP and port
+    socket = new WebSocket(url);
 
     socket.onopen = function () {
         console.log("WebSocket connection opened");
@@ -30,6 +30,7 @@ function initWebSocket(url) {
     socket.onclose = function () {
         console.log("WebSocket connection closed");
         updateStatus(false);
+        setTimeout(initWebSocket(url), 1000); // try to reconnect in every second
     };
 
     socket.onerror = function (error) {
@@ -38,9 +39,11 @@ function initWebSocket(url) {
     };
 }
 
-function sendData(dataObject) {
-    if (sendData.lastSent && Date.now() - sendData.lastSent < 200) {
-        console.log('Data is being sent too fast, skipping this one:', dataObject);
+function sendData(dataObject, priority = false) {
+
+    // send the normal packages with a 200ms interval, to prevent overloading the server
+    // the priority packages can be sent anytime
+    if (!priority && sendData.lastSent && Date.now() - sendData.lastSent < 200) {
         return;
     }
 
@@ -52,7 +55,14 @@ function sendData(dataObject) {
 // Send joystick position
 function sendJoystickData(x, y) {
     const data = { type: 'joystick', x: Math.round(x * 125), y: Math.round(y * (-125)) };
-    sendData(data);
+
+    // Make the stop command priority to always send it
+    let priority = false
+    if (x === 0 && y === 0) {
+        priority = true;
+    }
+
+    sendData(data, priority);
 }
 
 // Send slider data
@@ -173,6 +183,7 @@ function updateStatus(isConnected) {
         statusLabel.textContent = 'Connected';
         statusLabel.classList.remove('status-disconnected');
         statusLabel.classList.add('status-connected');
+
     } else {
         statusLabel.textContent = 'Disconnected';
         statusLabel.classList.remove('status-connected');
