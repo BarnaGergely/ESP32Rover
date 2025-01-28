@@ -11,20 +11,20 @@ Critical error : This program is ESP32 only
 #include <LittleFS.h>
 #include <WiFi.h>
 
-#define DEBUG  // Comment this line to disable debug logs and build the app in release mode
+#define DEVELOPER_MODE  // Comment this line to disable debug logs and build the app in release mode
 
-#ifdef DEBUG
+#ifdef DEVELOPER_MODE
 #define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO  // In debug mode, set the default log level to INFO in DebugLog library
 #endif
 
-#ifndef DEBUG
+#ifndef DEVELOPER_MODE
 #define DEBUGLOG_DISABLE_LOG  // In release mode, disable all logs
 #endif
 
 #include <DebugLog.h>
 
-#ifdef DEBUG
-#define WOKWI  // In debug mode, turn on features for WokWi simulation
+#ifdef DEVELOPER_MODE
+#define WOKWI  // In developer mode, turn on features for WokWi simulation
 #endif
 
 #define MOTOR_LEFT_PIN1 2
@@ -56,7 +56,7 @@ MotorDriver motorRight(DRV8833(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_DRIVER_
 
 LedBlinker builtInLed = LedBlinker(LED_BUILTIN);
 
-const char* htmlContent PROGMEM = R"(
+const char* mainPage PROGMEM = R"(
 <!DOCTYPE html>
 <html>
 <head>
@@ -74,8 +74,11 @@ IPAddress myIP;
 AsyncWebServer webServer(80);
 
 // Function declarations:
+int setupWifiAP();
+int setupWokwiWifi();
 int setupWifi();
 int mapRestEndpoints();
+void handleRoot(AsyncWebServerRequest* request);
 int setupWebServer();
 
 // Main program:
@@ -109,6 +112,15 @@ void loop() {
 
 // Function definitions:
 int setupWifi() {
+    // WOKWI not supports Access Points, so we need to connect its wifi if we are using it
+#ifdef WOKWI
+    setupWokwiWifi();
+#else
+    setupWifiAP();
+#endif
+}
+
+int setupWifiAP() {
     LOG_INFO("Setting up WiFi Access Point");
 
     // Remove the password parameter, if you want the
@@ -120,10 +132,23 @@ int setupWifi() {
     }
 
     myIP = WiFi.softAPIP();
-    LOG_INFO("AP IP address: ", myIP);
+    LOG_INFO("Access Point IP address: ", myIP);
 
     return 0;
 }
+
+int setupWokwiWifi() {
+    Serial.print("Connecting to WiFi");
+    WiFi.begin("Wokwi-GUEST", "", 6);  // The WiFi channel 6 skips the WiFi scanning phase and saves about 4 seconds when connecting to the WiFi.
+    while (WiFi.status() != WL_CONNECTED) {
+        delay(100);
+        Serial.print(".");
+    }
+    Serial.println("Connected!");
+    return 0;
+}
+
+void handleRoot(AsyncWebServerRequest* request) { request->send(200, "text/html", mainPage); }
 
 int setupWebServer() {
     LOG_INFO("Setting up web server");
@@ -139,15 +164,8 @@ int setupWebServer() {
     }
     */
 
-    mapRestEndpoints();
+    webServer.on("/", HTTP_GET, handleRoot);
+    webServer.onNotFound(handleRoot);
     webServer.begin();
-    return 0;
-}
-
-int mapRestEndpoints() {
-    webServer.on("/", HTTP_GET, [](AsyncWebServerRequest* request) { request->send(200, "text/html", htmlContent); });
-
-    webServer.onNotFound([&](AsyncWebServerRequest* request) { request->send(200, "text/html", htmlContent); });
-
     return 0;
 }
