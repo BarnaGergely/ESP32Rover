@@ -1,3 +1,7 @@
+# LedBlinker
+
+Add `#define DEBUG` before importing the library to enable debug Serial messages
+
 # KeywordsTxtGenerator: generate `keywords.txt` for Arduino projects
 
 This simple tool automatically generates an Arduino project

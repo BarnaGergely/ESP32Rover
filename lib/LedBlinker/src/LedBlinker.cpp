@@ -1,13 +1,18 @@
-#include "Arduino.h"
-#include "LedBlinker.h"
+#include "LedBlinker.h";
+
+#include "Arduino.h";
+
+// #define DEBUG // Uncomment this line out to enable debug messages
 
 void LedBlinker::blinkContinuously(unsigned duration, unsigned interval) {
     _blinkContinuouslyDuration = duration;
     _blinkContinuouslyInterval = interval;
+#ifdef DEBUG
     Serial.println("Blinking in every " + String(interval) + "ms for " + String(duration) + "ms");
+#endif
 }
 
-void LedBlinker::blink(unsigned milliseconds) {
+void LedBlinker::blink(unsigned milliseconds = 300) {
     if (isBlinkOneActive()) return;
 
     turnOn();
@@ -15,7 +20,7 @@ void LedBlinker::blink(unsigned milliseconds) {
     _OneBlinkStart = millis();
 }
 
-void LedBlinker::blinkBlocking(unsigned milliseconds) {
+void LedBlinker::blinkBlocking(unsigned milliseconds = 300) {
     turnOn();
     delay(milliseconds);
     turnOff();
@@ -26,16 +31,16 @@ void LedBlinker::disable() {
     _isLightingEnabled = false;
 }
 
-void LedBlinker::enable() {
-    _isLightingEnabled = true;
-}
+void LedBlinker::enable() { _isLightingEnabled = true; }
 
 void LedBlinker::turnOn() {
     if (!_isLightingEnabled) return;
 
     digitalWrite(_pin, HIGH);
     _isLighting = true;
+#ifdef DEBUG
     Serial.println("Light turned on");
+#endif
 }
 
 void LedBlinker::turnOff() {
@@ -43,7 +48,9 @@ void LedBlinker::turnOff() {
 
     digitalWrite(_pin, LOW);
     _isLighting = false;
+#ifdef DEBUG
     Serial.println("Light turned off");
+#endif
 }
 
 void LedBlinker::run() {
@@ -55,7 +62,9 @@ void LedBlinker::run() {
     unsigned long currentMillis = millis();
 
     if (isBlinkOneActive()) {
+#ifdef DEBUG
         Serial.println("BlinkOne is Active");
+#endif
         if (currentMillis - _OneBlinkStart >= _blinkOneDuration) {
             turnOff();
             _blinkOneDuration = 0;
@@ -63,9 +72,11 @@ void LedBlinker::run() {
     }
 
     if (blinkContinuouslyActive()) {
+#ifdef DEBUG
         Serial.println("blinkContinuously is Active");
         Serial.println("Off: " + String(currentMillis) + " - " + String(_lastblinkContinuouslyTurnedOn) + " >= " + String(_blinkContinuouslyDuration));
         Serial.println("On: " + String(currentMillis) + " - " + String(_lastblinkContinuouslyTurnedOff) + " >= " + String(_blinkContinuouslyInterval));
+#endif
 
         // if the LED is on and the on duration has passed, turn it off
         if (_isLighting && (currentMillis - _lastblinkContinuouslyTurnedOn >= _blinkContinuouslyDuration)) {
