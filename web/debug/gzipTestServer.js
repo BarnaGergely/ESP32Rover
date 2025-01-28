@@ -2,9 +2,9 @@ const expressStaticGzip = require("express-static-gzip");
 const express = require('express');
 const app = express();
 const http = require('http');
-const WebSocket = require('ws');
+const webSocket = require('ws');
 const server = http.createServer(app);
-const socket = new WebSocket.Server({ server });
+const socket = new webSocket.Server({ server });
 
 const port = 80;
 

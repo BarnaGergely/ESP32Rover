@@ -5,6 +5,8 @@ const slider2 = document.getElementById('slider2');
 const toggleReturn = document.getElementById('toggle-return');
 const statusLabel = document.getElementById('status');
 
+const url = 'ws://192.168.0.112/';
+
 let joystickOffset = { x: 0, y: 0 };
 let isDragging = false;
 let xPos = 0;
@@ -13,48 +15,59 @@ let yPos = 0;
 let socket;
 
 // Initialize WebSocket
-function initWebSocket() {
-    socket = new WebSocket('ws://127.0.0.1:80/'); // Replace with your server's IP and port
+function initWebSocket(url) {
+    socket = new WebSocket(url); // Replace with your server's IP and port
 
-    socket.onopen = function() {
+    socket.onopen = function () {
         console.log("WebSocket connection opened");
         updateStatus(true);
     };
 
-    socket.onmessage = function(event) {
+    socket.onmessage = function (event) {
         console.log("Message from server: ", event.data);
     };
 
-    socket.onclose = function() {
+    socket.onclose = function () {
         console.log("WebSocket connection closed");
         updateStatus(false);
     };
 
-    socket.onerror = function(error) {
+    socket.onerror = function (error) {
         console.error("WebSocket error: ", error);
         updateStatus(false);
     };
 }
 
+function sendData(dataObject) {
+    if (sendData.lastSent && Date.now() - sendData.lastSent < 200) {
+        console.log('Data is being sent too fast, skipping this one:', dataObject);
+        return;
+    }
+
+    sendData.lastSent = Date.now();
+    const dataJson = JSON.stringify(dataObject);
+    socket.send(dataJson);
+}
+
 // Send joystick position
 function sendJoystickData(x, y) {
-    const data = JSON.stringify({ type: 'joystick', x: Math.round(x*125), y: Math.round(y*(-125)) });
-    socket.send(data);
+    const data = { type: 'joystick', x: Math.round(x * 125), y: Math.round(y * (-125)) };
+    sendData(data);
 }
 
 // Send slider data
 function sendSlider1Data() {
-    const data = JSON.stringify({ slider1: slider1.value });
+    const data = { slider1: slider1.value };
     // set the slider label to the slider name and then value of the slider like Slider 1: 50
     document.getElementById('labelslider1').innerHTML = "Slider 1: " + slider1.value;
-    socket.send(data);
+    sendData(data)
 }
 
 // Send slider data
 function sendSlider2Data() {
-    const data = JSON.stringify({ slider2: slider2.value });
+    const data = { slider2: slider2.value };
     document.getElementById('labelslider2').innerHTML = "Slider 2: " + slider2.value;
-    socket.send(data);
+    sendData(data)
 }
 
 function initSliders() {
@@ -69,15 +82,15 @@ function toggleSwitch(id) {
     const button = document.getElementById('switch' + id);
     const isOn = button.classList.toggle('switch-on');  // Toggle switch status
     const value = isOn ? 1 : 0;
-    const data = JSON.stringify({ type: 'switch', id: id, value: value });
-    socket.send(data);
+    const data = { type: 'switch', id: id, value: value };
+    sendData(data);
 }
 
 // Send push button data
 function sendPushData(id, value) {
     const button = document.getElementById('push' + id);
-    const data = JSON.stringify({ type: 'push', id: id, value: value });
-    socket.send(data);
+    const data = { type: 'push', id: id, value: value };
+    sendData(data);
 
     // Add visual effect on press
     if (value === 1) {
@@ -93,7 +106,7 @@ joystick.addEventListener('touchstart', startDrag, { passive: true });
 
 
 function startDrag(event) {
-    event.preventDefault();
+    //event.preventDefault(); TODO: Causes exception, but I dont know why does it needed
     isDragging = true;
 
     document.addEventListener('mousemove', dragJoystick);
@@ -190,4 +203,4 @@ function handleSL() {
     }
 }
 
-window.onload = initWebSocket;
+window.onload = initWebSocket(url);
