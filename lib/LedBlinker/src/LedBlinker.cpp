@@ -1,6 +1,6 @@
-#include "LedBlinker.h";
+#include "LedBlinker.h"
 
-#include "Arduino.h";
+#include "Arduino.h"
 
 // #define DEBUG // Uncomment this line out to enable debug messages
 
@@ -12,7 +12,7 @@ void LedBlinker::blinkContinuously(unsigned duration, unsigned interval) {
 #endif
 }
 
-void LedBlinker::blink(unsigned milliseconds = 300) {
+void LedBlinker::blink(unsigned milliseconds) {
     if (isBlinkOneActive()) return;
 
     turnOn();
@@ -20,7 +20,7 @@ void LedBlinker::blink(unsigned milliseconds = 300) {
     _OneBlinkStart = millis();
 }
 
-void LedBlinker::blinkBlocking(unsigned milliseconds = 300) {
+void LedBlinker::blinkBlocking(unsigned milliseconds) {
     turnOn();
     delay(milliseconds);
     turnOff();
