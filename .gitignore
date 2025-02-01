@@ -21,7 +21,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-lib/
+#lib/ # I need to version my own libraries
 lib64/
 parts/
 sdist/

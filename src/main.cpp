@@ -27,7 +27,7 @@ Critical error : This program is ESP32 or ESP8266 only
 #define DEBUGLOG_DISABLE_LOG  // In release mode, disable all logs
 #endif
 
-#include <DebugLog.h>
+#include <SimpleDebugLog.h>
 
 #ifdef DEVELOPER_MODE
 #define WOKWI  // In developer mode, turn on features for WokWi simulation
