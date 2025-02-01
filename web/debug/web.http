@@ -1,0 +1,2 @@
+### Test localhost endpoint
+GET http://127.0.0.1/fs/ HTTP/1.1
