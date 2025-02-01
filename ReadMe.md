@@ -1,5 +1,11 @@
 # asd
 
+## TODO:
+
+- fix SimpleDebugLog redefinition warnings
+- Joytick not centers if the server is not connected
+- Setup Arduino Websocket server
+
 <https://github.com/rlogiacco/BatterySense>
 <https://github.com/ESP32Async/ESPAsyncWebServer>
 <https://github.com/TheArduinist/DRV8833>
