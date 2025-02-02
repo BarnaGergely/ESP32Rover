@@ -43,6 +43,8 @@ wss.on('connection', function connection(ws) {
             console.log("Switch data received: " + "Switch ID:", doc.id, "Value:", doc.value);
         } else if (doc.type === "push") {
             console.log("Push button data received: " + "Push button ID:", doc.id, "Value:", doc.value);
+        } else if (doc.type === "motor") {
+            console.log("Motor data received: " + "Motor ID:", doc.id, "Value:", doc.value);
         } else {
             console.log("Unknown data received");
         }
