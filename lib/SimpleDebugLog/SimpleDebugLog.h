@@ -1,6 +1,5 @@
 #ifndef SIMPLE_DEBUG_LOG
   #define SIMPLE_DEBUG_LOG
-#endif
 
 #include <Arduino.h>
 
@@ -74,5 +73,7 @@
   #define LOG_INFO(...)
   #define LOG_DEBUG(...)
   #define LOG_TRACE(...)
+
+#endif
 
 #endif
