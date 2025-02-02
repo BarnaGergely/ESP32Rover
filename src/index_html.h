@@ -289,9 +289,6 @@ let isDragging = false;
 let xPos = 0;
 let yPos = 0;
 
-let pingInterval;
-let pongTimeout;
-
 let socket;
 
 // Initialize WebSocket
@@ -301,46 +298,22 @@ function initWebSocket(url) {
     socket.onopen = function () {
         console.log("WebSocket connection opened");
         updateStatus(true);
-        startHeartbeat();
     };
 
     socket.onmessage = function (event) {
         console.log("Message from server: ", event.data);
-        if (event.data === "pong") {
-            clearTimeout(pongTimeout);
-        }
     };
 
     socket.onclose = function () {
         console.log("WebSocket connection closed");
         updateStatus(false);
-        stopHeartbeat();
-        setTimeout(() => initWebSocket(url), 1000); // try to reconnect every second
+        setTimeout(initWebSocket(url), 1000); // try to reconnect in every second
     };
 
     socket.onerror = function (error) {
         console.error("WebSocket error: ", error);
         updateStatus(false);
-        stopHeartbeat();
     };
-}
-
-// Send a ping request to the server at regular intervals to check if it's healthy. This helps to detect connection loss.
-function startHeartbeat() {
-    pingInterval = setInterval(() => {
-        if (socket.readyState === WebSocket.OPEN) {
-            socket.send(JSON.stringify({ type: "ping" }));
-            pongTimeout = setTimeout(() => {
-                console.log("Connection lost");
-                socket.close();
-            }, 1000); // wait 1 seconds for pong response
-        }
-    }, 5000); // send ping every 5 seconds
-}
-
-function stopHeartbeat() {
-    clearInterval(pingInterval);
-    clearTimeout(pongTimeout);
 }
 
 function sendData(dataObject) {
@@ -349,8 +322,8 @@ function sendData(dataObject) {
 }
 
 // Send joystick position
-function sendJoystickData(x, y) {
-    const data = { type: 'joystick', x: Math.round(x * 125), y: Math.round(y * (-125)) };
+function sendJoystickAndMotorData(x, y) {
+    const data = { type: 'joystick', x: Math.round(x * 127), y: Math.round(y * (-127)) };
 
     // Make the stop command priority to always send it
     let priority = false
@@ -360,12 +333,58 @@ function sendJoystickData(x, y) {
 
     // send the normal packages with a 200ms interval, to prevent overloading the server
     // the priority packages can be sent anytime
-    if (!priority && sendJoystickData.lastSent && Date.now() - sendJoystickData.lastSent < 200) {
+    if (!priority && sendJoystickAndMotorData.lastSent && Date.now() - sendJoystickAndMotorData.lastSent < 200) {
         return;
     }
-    sendJoystickData.lastSent = Date.now();
+    sendJoystickAndMotorData.lastSent = Date.now();
 
+    // Send joystick data to server
     sendData(data, priority);
+
+    // Send motor data to server
+    const motorData = convertJoystickDataToMotorData(x, y);
+    sendMotorData("leftDrive", motorData.motor1);
+    sendMotorData("rightDrive", motorData.motor2);
+}
+
+function convertJoystickDataToMotorData(rotate, drive) {
+    // Source: https://xiaoxiae.github.io/Robotics-Simplified-Website/drivetrain-control/arcade-drive/
+    let leftMotor = 0;
+    let rightMotor = 0;
+
+    // variables to determine the quadrants
+    const maximum = Math.max(Math.abs(drive), Math.abs(rotate));
+    let total = drive + rotate;
+    let difference = drive - rotate;
+
+    if (drive >= 0) {
+        if (rotate >= 0) {  // I quadrant
+            leftMotor = maximum;
+            rightMotor = difference;
+        } else {            // II quadrant
+            leftMotor = total;
+            rightMotor = maximum;
+        }
+    } else {
+        if (rotate >= 0) {  // IV quadrant
+            leftMotor = total;
+            rightMotor = -maximum;
+        } else {            // III quadrant
+            leftMotor = -maximum;
+            rightMotor = difference;
+        }
+    }
+
+    // Normalize left and right motor value to -127 to 127
+    leftMotor = Math.round(leftMotor * -127);
+    rightMotor = Math.round(rightMotor * -127);
+
+    return { motor1: leftMotor, motor2: rightMotor };
+}
+
+function sendMotorData(id, x) {
+    const data = { type: 'motor', id: id, value: x };
+    sendData(data);
 }
 
 // Send slider data
@@ -463,7 +482,7 @@ function dragJoystick(event) {
     joystick.style.top = `${yPos + rect.height / 2}px`;
 
     // Send joystick data to server
-    sendJoystickData(xPos / limitRadius, yPos / limitRadius);
+    sendJoystickAndMotorData(xPos / limitRadius, yPos / limitRadius);
 }
 
 function stopDrag() {
@@ -474,7 +493,7 @@ function stopDrag() {
     document.removeEventListener('touchend', stopDrag);
 
     if (toggleReturn.checked) {
-        sendJoystickData(0, 0);
+        sendJoystickAndMotorData(0, 0);
         xPos = 0;
         yPos = 0;
         joystick.style.left = '50%';
@@ -495,7 +514,7 @@ function updateStatus(isConnected) {
 }
 function handleToggleChange() {
     if (toggleReturn.checked) {
-        sendJoystickData(0, 0);
+        sendJoystickAndMotorData(0, 0);
         xPos = 0;
         yPos = 0;
         joystick.style.left = '50%';

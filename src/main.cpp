@@ -22,7 +22,7 @@ Critical error : This program is ESP32 or ESP8266 only
 #define DEVELOPER_MODE  // Comment this line to disable debug logs and build the app in release mode
 
 #ifdef DEVELOPER_MODE
-#define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO  // In debug mode, set the default log level to INFO in DebugLog library
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_DEBUG  // In debug mode, set the default log level to INFO in DebugLog library
 #endif
 
 #ifndef DEVELOPER_MODE
@@ -44,7 +44,7 @@ Critical error : This program is ESP32 or ESP8266 only
 #define MOTOR_DRIVER_RIGHT_INVERT false
 
 #define MOTOR_DRIVER_MAX_PWM 127
-#define MOTOR_DRIVER_MIN_PWM -128
+#define MOTOR_DRIVER_MIN_PWM -127
 #define MOTOR_DRIVER_RAMP_TIME 60
 #define MOTOR_DRIVER_NEUTRAL_WIDTH 60
 #define MOTOR_DRIVER_BRAKE false
@@ -236,6 +236,9 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         LOG_INFO("Joystick data received");
         LOG_INFO("  x: ", doc["x"].as<float>());
         LOG_INFO("  y: ", doc["y"].as<float>());
+
+        // Map the joystick values to motor speeds
+
     } else if (doc["slider1"].as<int>() > 0) {
         LOG_INFO("Slider 1 data received");
         LOG_INFO("  Slider 1: ", doc["slider1"].as<int>());
@@ -250,6 +253,17 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         LOG_INFO("Push button data received");
         LOG_INFO("  Push button ID: ", doc["id"].as<int>());
         LOG_INFO("  Value: ", doc["value"].as<int>());
+    } else if (doc["type"] == "motor") {
+        LOG_INFO("Motor data received");
+        LOG_INFO("  Motor ID: ", doc["id"].as<String>()); // TODO: improve performance by using char[] instead of String
+        LOG_INFO("  Value: ", doc["value"].as<int>());
+
+        if (doc["id"] == "leftDrive") {
+            motorLeft.setSpeed(doc["value"].as<int>());
+        } else if (doc["id"] == "rightDrive") {
+            motorRight.setSpeed(doc["value"].as<int>());
+        }
+
     } else {
         LOG_INFO("Unknown data received");
     }
