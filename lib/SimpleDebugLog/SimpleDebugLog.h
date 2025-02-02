@@ -27,33 +27,44 @@
   // Helper macro to count the number of arguments
   #define GET_MACRO(_1, _2, NAME, ...) NAME
 
-  // Define the LOG_ERROR macro to handle different numbers of arguments
-  #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
-  #define LOG_WARN(...) GET_MACRO(__VA_ARGS__, LOG_WARN_HANDLER2, LOG_WARN_HANDLER1)(__VA_ARGS__)
-  #define LOG_INFO(...) GET_MACRO(__VA_ARGS__, LOG_INFO_HANDLER2, LOG_INFO_HANDLER1)(__VA_ARGS__)
-  #define LOG_DEBUG(...) GET_MACRO(__VA_ARGS__, LOG_DEBUG_HANDLER2, LOG_DEBUG_HANDLER1)(__VA_ARGS__)
-  #define LOG_TRACE(...) GET_MACRO(__VA_ARGS__, LOG_TRACE_HANDLER2, LOG_TRACE_HANDLER1)(__VA_ARGS__)
-
+  // Define the macros according to the default log level
   #if defined(DEBUGLOG_DEFAULT_LOG_LEVEL_ERROR)
+    #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
     #define LOG_WARN(...)
     #define LOG_INFO(...)
     #define LOG_DEBUG(...)
     #define LOG_TRACE(...)
   #elif defined(DEBUGLOG_DEFAULT_LOG_LEVEL_WARN)
+    #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
+    #define LOG_WARN(...) GET_MACRO(__VA_ARGS__, LOG_WARN_HANDLER2, LOG_WARN_HANDLER1)(__VA_ARGS__)
     #define LOG_INFO(...)
     #define LOG_DEBUG(...)
     #define LOG_TRACE(...)
   #elif defined(DEBUGLOG_DEFAULT_LOG_LEVEL_INFO)
+    #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
+    #define LOG_WARN(...) GET_MACRO(__VA_ARGS__, LOG_WARN_HANDLER2, LOG_WARN_HANDLER1)(__VA_ARGS__)
+    #define LOG_INFO(...) GET_MACRO(__VA_ARGS__, LOG_INFO_HANDLER2, LOG_INFO_HANDLER1)(__VA_ARGS__)
     #define LOG_DEBUG(...)
     #define LOG_TRACE(...)
   #elif defined(DEBUGLOG_DEFAULT_LOG_LEVEL_DEBUG)
+    #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
+    #define LOG_WARN(...) GET_MACRO(__VA_ARGS__, LOG_WARN_HANDLER2, LOG_WARN_HANDLER1)(__VA_ARGS__)
+    #define LOG_INFO(...) GET_MACRO(__VA_ARGS__, LOG_INFO_HANDLER2, LOG_INFO_HANDLER1)(__VA_ARGS__)
+    #define LOG_DEBUG(...) GET_MACRO(__VA_ARGS__, LOG_DEBUG_HANDLER2, LOG_DEBUG_HANDLER1)(__VA_ARGS__)
     #define LOG_TRACE(...)
   #elif defined(DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE)
-    // intetionally left emoty
-    // don't disable any log
+    #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
+    #define LOG_WARN(...) GET_MACRO(__VA_ARGS__, LOG_WARN_HANDLER2, LOG_WARN_HANDLER1)(__VA_ARGS__)
+    #define LOG_INFO(...) GET_MACRO(__VA_ARGS__, LOG_INFO_HANDLER2, LOG_INFO_HANDLER1)(__VA_ARGS__)
+    #define LOG_DEBUG(...) GET_MACRO(__VA_ARGS__, LOG_DEBUG_HANDLER2, LOG_DEBUG_HANDLER1)(__VA_ARGS__)
+    #define LOG_TRACE(...) GET_MACRO(__VA_ARGS__, LOG_TRACE_HANDLER2, LOG_TRACE_HANDLER1)(__VA_ARGS__)
   #else
     #warning "Defaulting to a log level of: DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE"
-    // don't disable any log
+    #define LOG_ERROR(...) GET_MACRO(__VA_ARGS__, LOG_ERROR_HANDLER2, LOG_ERROR_HANDLER1)(__VA_ARGS__)
+    #define LOG_WARN(...) GET_MACRO(__VA_ARGS__, LOG_WARN_HANDLER2, LOG_WARN_HANDLER1)(__VA_ARGS__)
+    #define LOG_INFO(...) GET_MACRO(__VA_ARGS__, LOG_INFO_HANDLER2, LOG_INFO_HANDLER1)(__VA_ARGS__)
+    #define LOG_DEBUG(...) GET_MACRO(__VA_ARGS__, LOG_DEBUG_HANDLER2, LOG_DEBUG_HANDLER1)(__VA_ARGS__)
+    #define LOG_TRACE(...) GET_MACRO(__VA_ARGS__, LOG_TRACE_HANDLER2, LOG_TRACE_HANDLER1)(__VA_ARGS__)
   #endif
 
 #elif defined(DEBUGLOG_DISABLE_LOG)
