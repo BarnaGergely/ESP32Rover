@@ -5,7 +5,7 @@ const slider2 = document.getElementById('slider2');
 const toggleReturn = document.getElementById('toggle-return');
 const statusLabel = document.getElementById('status');
 
-const url = 'ws://127.0.0.1/';  // Replace with your server's IP and port
+const url = `ws://${window.location.hostname}/ws`;  // Replace with your server's IP and port
 
 let joystickOffset = { x: 0, y: 0 };
 let isDragging = false;
@@ -16,7 +16,7 @@ let socket;
 
 // Initialize WebSocket
 function initWebSocket(url) {
-    socket = new WebSocket(url);
+    socket = new WebSocket(`ws://${window.location.hostname}/ws`);
 
     socket.onopen = function () {
         console.log("WebSocket connection opened");
@@ -39,15 +39,7 @@ function initWebSocket(url) {
     };
 }
 
-function sendData(dataObject, priority = false) {
-
-    // send the normal packages with a 200ms interval, to prevent overloading the server
-    // the priority packages can be sent anytime
-    if (!priority && sendData.lastSent && Date.now() - sendData.lastSent < 200) {
-        return;
-    }
-
-    sendData.lastSent = Date.now();
+function sendData(dataObject) {
     const dataJson = JSON.stringify(dataObject);
     socket.send(dataJson);
 }
@@ -61,6 +53,13 @@ function sendJoystickData(x, y) {
     if (x === 0 && y === 0) {
         priority = true;
     }
+
+    // send the normal packages with a 200ms interval, to prevent overloading the server
+    // the priority packages can be sent anytime
+    if (!priority && sendJoystickData.lastSent && Date.now() - sendJoystickData.lastSent < 200) {
+        return;
+    }
+    sendJoystickData.lastSent = Date.now();
 
     sendData(data, priority);
 }

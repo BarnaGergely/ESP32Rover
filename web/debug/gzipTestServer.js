@@ -4,17 +4,28 @@ const app = express();
 const http = require('http');
 const webSocket = require('ws');
 const server = http.createServer(app);
-const socket = new webSocket.Server({ server });
+const wss = new webSocket.Server({ noServer: true });
 
 const port = 80;
 
 app.use("/", expressStaticGzip("data"));
-
 app.use("/raw", express.static("web/src"));
 
-socket.on('connection', function connection(ws) {
+server.on('upgrade', (request, socket, head) => {
+    const pathname = request.url;
+
+    if (pathname === '/ws') {
+        wss.handleUpgrade(request, socket, head, (ws) => {
+            wss.emit('connection', ws, request);
+        });
+    } else {
+        socket.destroy();
+    }
+});
+
+wss.on('connection', function connection(ws) {
     ws.on('message', function incoming(data) {
-        let doc
+        let doc;
         try {
             doc = JSON.parse(data);
         } catch (error) {
@@ -40,6 +51,6 @@ socket.on('connection', function connection(ws) {
     ws.send('Connection established');
 });
 
-server.listen(port, function () {
-    console.log("Server started on http://localhost:" + port);
+server.listen(port, () => {
+    console.log(`Server is listening on port http://localhost:${port}`);
 });
