@@ -71,7 +71,8 @@ def minify_files():
 
     with open(f"{input_folder}/{file_name}.css", "r") as f:
         css = f.read()
-        minified_css = rcssmin.cssmin(css)
+        #minified_css = rcssmin.cssmin(css)
+        minified_css = css # uncomment it to disable minify
 
         with open(f"{minify_folder}/{file_name}.css", "w") as f:
             f.write(minified_css)
@@ -86,8 +87,8 @@ def minify_files():
 
     with open(f"{input_folder}/{file_name}.js", "r") as f:
         js = f.read()
-        minified_js = jsmin.jsmin(js)
-        #minified_js = js # uncomment it to disable minify
+        #minified_js = jsmin.jsmin(js)
+        minified_js = js # uncomment it to disable minify
 
         with open(f"{minify_folder}/{file_name}.js", "w") as f:
             f.write(minified_js)
@@ -102,7 +103,8 @@ def minify_files():
 
     with open(f"{input_folder}/{file_name}.html", "r") as f:
         html = f.read()
-        minified_html = htmlmin.minify(html, remove_comments=True, remove_empty_space=True)
+        #minified_html = htmlmin.minify(html, remove_comments=True, remove_empty_space=True)
+        minified_html = html # uncomment it to disable minify
 
         with open(f"{minify_folder}/{file_name}.html", "w") as f:
             f.write(minified_html)
@@ -118,9 +120,6 @@ def merge_files():
 
     merge(f"{minify_folder}/{file_name}.html", f"{temp_folder}/{file_name}.html")
 
-    # if file is not exist in input folder, return
-    if not os.path.exists(f"{temp_folder}/{file_name}.html"):
-        print(f"File {temp_folder}/{file_name}.html not found")
     return
 
 def compress_file():
