@@ -28,22 +28,21 @@ Critical error : This program is ESP32 or ESP8266 only
 #define DEBUGLOG_DISABLE_LOG  // In release mode, disable all logs
 #endif
 
-#include <SimpleDebugLog.h>
 #include <ArduinoJson.h>
 #include <DRV8833MotorDriver.h>
 #include <ESPAsyncWebServer.h>
 #include <LedBlinker.h>
 #include <LittleFS.h>
-
+#include <SimpleDebugLog.h>
 
 #ifdef DEVELOPER_MODE
 // #define WOKWI  // In developer mode, turn on features for WokWi simulation
 #endif
 
-#define MOTOR_LEFT_PIN1 13  // D7 on D1 Mini
-#define MOTOR_LEFT_PIN2 12  // D6 on D1 Mini
-#define MOTOR_RIGHT_PIN1 14   // D5 on D1 Mini 
-#define MOTOR_RIGHT_PIN2 16   // D0 on D1 Mini
+#define MOTOR_LEFT_PIN1 13   // D7 on D1 Mini
+#define MOTOR_LEFT_PIN2 12   // D6 on D1 Mini
+#define MOTOR_RIGHT_PIN1 14  // D5 on D1 Mini
+#define MOTOR_RIGHT_PIN2 16  // D0 on D1 Mini
 
 #define MOTOR_DRIVER_LEFT_INVERT true
 #define MOTOR_DRIVER_RIGHT_INVERT false
@@ -62,12 +61,9 @@ Critical error : This program is ESP32 or ESP8266 only
 // a valid password must have more than 7 characters
 #define WIFI_PASSWORD ""
 
-                                              // Global variables:
-
-                                              RampFilter leftRampFilter;
-RampFilter rightRampFilter;
-DRV8833MotorDriver motorLeft(DRV8833(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_DRIVER_LEFT_INVERT), leftRampFilter);
-DRV8833MotorDriver motorRight(DRV8833(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_DRIVER_RIGHT_INVERT), rightRampFilter);
+// Global variables:
+DRV8833MotorDriver motorLeft(DRV8833(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_DRIVER_LEFT_INVERT));
+DRV8833MotorDriver motorRight(DRV8833(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_DRIVER_RIGHT_INVERT));
 
 LedBlinker builtInLed = LedBlinker(LED_BUILTIN);
 
