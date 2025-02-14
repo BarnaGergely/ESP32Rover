@@ -2,6 +2,9 @@
 
 ## Tasks
 
+- Fix Little FS
+- Add invert to led library
+- Fix Captive portal and DNS
 - fix SimpleDebugLog redefinition warnings
 - Joytick not centers if the server is not connected
 - Setup Arduino Websocket server

@@ -71,8 +71,8 @@ def minify_files():
 
     with open(f"{input_folder}/{file_name}.css", "r") as f:
         css = f.read()
-        #minified_css = rcssmin.cssmin(css)
-        minified_css = css # uncomment it to disable minify
+        minified_css = rcssmin.cssmin(css)
+        #minified_css = css # uncomment it to disable minify
 
         with open(f"{minify_folder}/{file_name}.css", "w") as f:
             f.write(minified_css)
@@ -103,8 +103,8 @@ def minify_files():
 
     with open(f"{input_folder}/{file_name}.html", "r") as f:
         html = f.read()
-        #minified_html = htmlmin.minify(html, remove_comments=True, remove_empty_space=True)
-        minified_html = html # uncomment it to disable minify
+        minified_html = htmlmin.minify(html, remove_comments=True, remove_empty_space=True)
+        #minified_html = html # uncomment it to disable minify
 
         with open(f"{minify_folder}/{file_name}.html", "w") as f:
             f.write(minified_html)
