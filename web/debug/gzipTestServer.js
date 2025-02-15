@@ -50,7 +50,7 @@ wss.on('connection', function connection(ws) {
         }
     });
 
-    ws.send('Connection established');
+    ws.send(JSON.stringify({ type: "log", message: 'Connection established' }));
 });
 
 server.listen(port, () => {

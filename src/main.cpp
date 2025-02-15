@@ -61,9 +61,12 @@ Critical error : This program is ESP32 or ESP8266 only
 // a valid password must have more than 7 characters
 #define WIFI_PASSWORD ""
 
+DRV8833 DRVLeft(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_DRIVER_LEFT_INVERT);
+DRV8833 DRVRight(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_DRIVER_RIGHT_INVERT);
+
 // Global variables:
-DRV8833MotorDriver motorLeft(DRV8833(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_DRIVER_LEFT_INVERT));
-DRV8833MotorDriver motorRight(DRV8833(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_DRIVER_RIGHT_INVERT));
+DRV8833MotorDriver motorLeft(DRVLeft);
+DRV8833MotorDriver motorRight(DRVRight);
 
 LedBlinker builtInLed = LedBlinker(LED_BUILTIN);
 
@@ -94,6 +97,8 @@ void handlePingHttpRequest(AsyncWebServerRequest *request);
 // Main program:
 void setup() {
     // Initialize the motor drivers
+    motorLeft.filter.setFilterFactor(20);
+    motorRight.filter.setFilterFactor(20);
     motorLeft.begin();
     motorRight.begin();
 
@@ -101,6 +106,7 @@ void setup() {
     delay(500);  // Give some time to connect to the serial monitor
     LOG_INFO("Starting setup");
 
+    Serial.begin(115200);
     builtInLed.begin();
     builtInLed.blinkContinuously(2000, 200);
 
@@ -142,7 +148,7 @@ void loop() {
     motorLeft.run();
     motorRight.run();
     builtInLed.run();
-    ws.cleanupClients();
+    ws.cleanupClients(); // TODO: only run it in every 2 sec based on WebSockets example: https://github.com/ESP32Async/ESPAsyncWebServer/blob/main/examples/WebSocket/WebSocket.ino
     // dnsServer.processNextRequest();
 #ifdef WOKWI
     delay(10);  // this speeds up the WokWi simulation
@@ -250,22 +256,28 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         LOG_INFO("  x: ", doc["x"].as<float>());
         LOG_INFO("  y: ", doc["y"].as<float>());
 
-        // Map the joystick values to motor speeds
-
     } else if (doc["slider1"].as<int>() > 0) {
         LOG_INFO("Slider 1 data received");
         LOG_INFO("  Slider 1: ", doc["slider1"].as<int>());
+        motorLeft.filter.setFilterFactor(doc["slider1"].as<int>());
+        motorRight.filter.setFilterFactor(doc["slider1"].as<int>());
+
+        ws.printfAll("{\"type\":\"log\",\"message\":\"Acceleration set to: %d\"}", doc["slider1"].as<int>());
+
     } else if (doc["slider2"].as<int>() > 0) {
         LOG_INFO("Slider 2 data received");
         LOG_INFO("  Slider 2: ", doc["slider2"].as<int>());
+
     } else if (doc["type"] == "switch") {
         LOG_INFO("Switch data received");
         LOG_INFO("  Switch ID: ", doc["id"].as<int>());
         LOG_INFO("  Value: ", doc["value"].as<int>());
+
     } else if (doc["type"] == "push") {
         LOG_INFO("Push button data received");
         LOG_INFO("  Push button ID: ", doc["id"].as<int>());
         LOG_INFO("  Value: ", doc["value"].as<int>());
+
     } else if (doc["type"] == "motor") {
         LOG_INFO("Motor data received");
         LOG_INFO("  Motor ID: ", doc["id"].as<String>());  // TODO: improve performance by using char[] instead of String

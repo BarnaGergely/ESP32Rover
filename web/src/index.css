@@ -216,3 +216,15 @@ body {
 .status-disconnected {
     background-color: var(--clr-failed); /* Red background for disconnected */
 }
+
+details {
+    width: 100%;
+    padding: 0.5rem;
+}
+
+details summary {
+    width: fit-content;
+    padding: 0.8rem;
+    border-radius: 1rem;
+    border: 2px solid #ccc;
+}

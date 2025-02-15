@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="dark light">
+    <!-- <meta name="color-scheme" content="dark light"> -->
     <link rel="stylesheet" href="index.css">
     <title>ESP8266/32 Joystick Control</title>
 </head>
@@ -55,7 +55,14 @@
             <button id="push7" class="button" onmousedown="sendPushData(7, 1)" onmouseup="sendPushData(7, 0)" ontouchstart="sendPushData(7, 1)" ontouchend="sendPushData(7, 0)">Push 7</button>
             <button id="push8" class="button" onmousedown="sendPushData(8, 1)" onmouseup="sendPushData(8, 0)" ontouchstart="sendPushData(8, 1)" ontouchend="sendPushData(8, 0)">Push 8</button>
         </div>
+        
+        <details>
+            <summary>Robot Logs</summary>
+            <div id="logs" class="logs">
+                
+            </div>
+        </details>
+        <script src="index.js"></script>
     </div>
-    <script src="index.js"></script>
 </body>
 </html>
