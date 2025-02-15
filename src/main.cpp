@@ -34,6 +34,7 @@ Critical error : This program is ESP32 or ESP8266 only
 #include <LedBlinker.h>
 #include <LittleFS.h>
 #include <SimpleDebugLog.h>
+#include <SimpleWebSocketLog.h>
 
 #ifdef DEVELOPER_MODE
 // #define WOKWI  // In developer mode, turn on features for WokWi simulation
@@ -256,17 +257,17 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         LOG_INFO("  x: ", doc["x"].as<float>());
         LOG_INFO("  y: ", doc["y"].as<float>());
 
-    } else if (doc["slider1"].as<int>() > 0) {
-        LOG_INFO("Slider 1 data received");
-        LOG_INFO("  Slider 1: ", doc["slider1"].as<int>());
-        motorLeft.filter.setFilterFactor(doc["slider1"].as<int>());
-        motorRight.filter.setFilterFactor(doc["slider1"].as<int>());
+    } else if (doc["type"] == "slider") {
+        LOG_INFO("Slider data received");
+        LOG_INFO("  Slider ID: ", doc["id"].as<String>());
+        LOG_INFO("  Slider Value: ", doc["value"].as<int>());
 
-        ws.printfAll("{\"type\":\"log\",\"message\":\"Acceleration set to: %d\"}", doc["slider1"].as<int>());
-
-    } else if (doc["slider2"].as<int>() > 0) {
-        LOG_INFO("Slider 2 data received");
-        LOG_INFO("  Slider 2: ", doc["slider2"].as<int>());
+        if (doc["id"] == "slider1") {
+            motorLeft.filter.setFilterFactor(doc["value"].as<int>());
+            motorRight.filter.setFilterFactor(doc["value"].as<int>());
+            
+            LOG_WEBSOCKET("Acceleration set to: %d", doc["value"].as<int>());
+        }
 
     } else if (doc["type"] == "switch") {
         LOG_INFO("Switch data received");

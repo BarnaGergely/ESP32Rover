@@ -1,7 +1,5 @@
 const joystick = document.getElementById('joystick');
 const joystickContainer = document.querySelector('.joystick-container');
-const slider1 = document.getElementById('slider1');
-const slider2 = document.getElementById('slider2');
 const toggleReturn = document.getElementById('toggle-return');
 const statusLabel = document.getElementById('status');
 
@@ -83,6 +81,7 @@ function sendJoystickAndMotorData(x, y) {
 
     // Send joystick data to server
     sendData(data, priority);
+    console.log("Joystick data sent: ", data);
 
     // Send motor data to server
     const motorData = convertJoystickDataToMotorData(x, y);
@@ -131,17 +130,10 @@ function sendMotorData(id, x) {
 }
 
 // Send slider data
-function sendSlider1Data() {
-    const data = { slider1: slider1.value };
+function sendSliderData(id) {
+    const data = { type: 'slider', id: id, value: document.getElementById(id).value };
     // set the slider label to the slider name and then value of the slider like Slider 1: 50
-    document.getElementById('labelslider1').innerHTML = "Slider 1: " + slider1.value;
-    sendData(data)
-}
-
-// Send slider data
-function sendSlider2Data() {
-    const data = { slider2: slider2.value };
-    document.getElementById('labelslider2').innerHTML = "Slider 2: " + slider2.value;
+    document.getElementById('label' + id).innerHTML = "Acceleration: " + slider1.value;
     sendData(data)
 }
 
@@ -280,3 +272,11 @@ function handleSL() {
 }
 
 window.onload = initWebSocket(url);
+
+function openLogMenu() {
+
+}
+
+function openOptionsMenu() {
+
+}
