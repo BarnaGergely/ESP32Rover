@@ -41,18 +41,14 @@ Critical error : This program is ESP32 or ESP8266 only
 
 #define MOTOR_LEFT_PIN1 13   // D7 on D1 Mini
 #define MOTOR_LEFT_PIN2 12   // D6 on D1 Mini
+#define MOTOR_LEFT_INVERT true
 #define MOTOR_RIGHT_PIN1 14  // D5 on D1 Mini
 #define MOTOR_RIGHT_PIN2 16  // D0 on D1 Mini
-
-#define MOTOR_DRIVER_LEFT_INVERT true
-#define MOTOR_DRIVER_RIGHT_INVERT false
+#define MOTOR_RIGHT_INVERT false
 
 #define MOTOR_DRIVER_MAX_PWM 127
 #define MOTOR_DRIVER_MIN_PWM -127
-#define MOTOR_DRIVER_RAMP_TIME 60
 #define MOTOR_DRIVER_NEUTRAL_WIDTH 60
-#define MOTOR_DRIVER_BRAKE false
-#define MOTOR_DRIVER_NEUTRAL_BRAKE false
 #include <DRV8833MotorDriver.h>
 #include <RampFilter.h>
 
@@ -61,8 +57,8 @@ Critical error : This program is ESP32 or ESP8266 only
 // a valid password must have more than 7 characters
 #define WIFI_PASSWORD ""
 
-DRV8833 DRVLeft(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_DRIVER_LEFT_INVERT);
-DRV8833 DRVRight(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_DRIVER_RIGHT_INVERT);
+DRV8833 DRVLeft(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_LEFT_INVERT);
+DRV8833 DRVRight(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_RIGHT_INVERT);
 
 // Global variables:
 DRV8833MotorDriver motorLeft(DRVLeft);

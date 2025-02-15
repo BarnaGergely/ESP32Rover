@@ -5,7 +5,7 @@ const slider2 = document.getElementById('slider2');
 const toggleReturn = document.getElementById('toggle-return');
 const statusLabel = document.getElementById('status');
 
-const url = `ws://${window.location.hostname}/ws`;  // Replace with your server's IP and port
+const url = `ws://${window.location.hostname}/ws`;
 
 let joystickOffset = { x: 0, y: 0 };
 let isDragging = false;
@@ -66,14 +66,13 @@ function sendData(dataObject) {
 
 // Send joystick position
 function sendJoystickAndMotorData(x, y) {
-    const data = { type: 'joystick', x: Math.round(x * 127), y: Math.round(y * (-127)) };
-
+    
     // Make the stop command priority to always send it
     let priority = false
     if (x === 0 && y === 0) {
         priority = true;
     }
-
+    
     // send the normal packages with a 200ms interval, to prevent overloading the server
     // the priority packages can be sent anytime
     if (!priority && sendJoystickAndMotorData.lastSent && Date.now() - sendJoystickAndMotorData.lastSent < 200) {
@@ -82,7 +81,11 @@ function sendJoystickAndMotorData(x, y) {
     sendJoystickAndMotorData.lastSent = Date.now();
 
     // Send joystick data to server
+    const data = { type: 'joystick', x: Math.round(x * 127), y: Math.round(y * (-127)) };
     sendData(data, priority);
+
+    // limit rotation to 50% throttle
+    x = x * 0.5;
 
     // Send motor data to server
     const motorData = convertJoystickDataToMotorData(x, y);

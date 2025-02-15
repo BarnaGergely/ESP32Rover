@@ -1,0 +1,20 @@
+def merge_files(html_file, js_file, css_file):
+    with open(html_file, 'r') as file:
+        html_content = file.read()
+
+    with open(js_file, 'r') as file:
+        js_content = file.read()
+
+    with open(css_file, 'r') as file:
+        css_content = file.read()
+
+    merged_content = html_content.replace('</head>', f'<style>{css_content}</style></head>')
+    merged_content = merged_content.replace('</body>', f'<script>{js_content}</script></body>')
+
+    with open(html_file, 'w') as file:
+        file.write(merged_content)
+
+# Example usage
+merge_files('index.html', 'script.js', 'style.css')
+
+# write a python script witch takes a html file name, a javascript file name and a css file name and merges them into the the html file by copying the content in the css and js to the html's <style> and <script> tag
