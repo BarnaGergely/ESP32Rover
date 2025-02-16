@@ -1,11 +1,9 @@
-<html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><style>:root{--clr-bg-1:#f0f0f0;--clr-bg-2:#e0e0e0;--clr-bg-3:#ccc;--clr-bg-joy:radial-gradient(circle,var(--clr-bg-1),var(--clr-bg-3));--clr-bg-cont:linear-gradient(135deg,var(--clr-bg-1),var(--clr-bg-2));--clr-btn:#28a745;--clr-success:#28a745;--clr-failed:#dc3545;--clr-brd-joy:1px solid #bbb}body{font-family:'Arial',sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:top;height:100vh;margin:2px;padding:5px;background-color:var(--clr-bg-1);box-sizing:border-box}.container{display:flex;flex-direction:column;align-items:center;gap:5px;padding:0px 15px 0px 15px;background:var(--clr-bg-cont);border:1px solid #ccc;border-radius:15px;box-shadow:0 4px 8px rgba(0,0,0,0.1);margin:10px auto;max-width:95%}.joystick-container{position:relative;width:250px;height:250px;background:var(--clr-bg-joy);border-radius:50%;box-shadow:0 8px 16px rgba(0,0,0,0.2);border:1px solid var(--clr-brd-joy);display:flex;justify-content:center;align-items:center}.joystick-container::before,.joystick-container::after{content:'';position:absolute;background-color:#cfcfcf}.joystick-container::before{width:1px;height:100%;top:0;left:50%;transform:translateX(-50%)}.joystick-container::after{width:100%;height:1px;top:50%;left:0;transform:translateY(-50%)}.joystick{position:absolute;width:50px;height:50px;background:radial-gradient(circle,#007bff,#0056b3);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 8px 16px rgba(0,0,0,0.2);touch-action:none;border:2px solid #004080;z-index:1}.joystick::before{content:'';position:absolute;width:10px;height:10px;background-color:rgb(121,25,25);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 2px 4px rgba(0,0,0,0.2)}.sliders{display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px;gap:10px}.slider-container{display:flex;flex-direction:column;align-items:center}.slider{-webkit-appearance:none;appearance:none;width:300px;height:15px;background:linear-gradient(to right,green,red);outline:none;opacity:0.7;transition:opacity .2s;border-radius:10px}.slider:hover{opacity:1}.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:25px;height:25px;background:#4CAF50;cursor:pointer;border-radius:5px}.slider::-moz-range-thumb{width:25px;height:30px;background:#4CAF50;cursor:pointer;border-radius:5px}.buttons{display:flex;justify-content:space-around;width:330px;flex-wrap:wrap}.button{width:70px;height:60px;background-color:var(--clr-btn);border:none;color:white;font-size:16px;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.2);cursor:pointer;transition:background-color 0.3s ease;margin:5px;user-select:none}.button.switch-on{background-color:#ff0707}.button.push-active{background-color:#0056b3;user-select:none}.common-label{font-size:16px;font-weight:bold;margin-right:1px;color:#333}.toggle-checkbox{width:20px;height:20px;cursor:pointer;accent-color:#007bff}.check-button-container{display:flex;justify-content:left;width:100%;align-items:center;gap:5px}.status-label{font-size:14px;font-weight:bold;padding:5px 10px;border-radius:5px;color:#fff}.status-connected{background-color:var(--clr-success)}.status-disconnected{background-color:var(--clr-failed)}details{width:100%;padding:0.5rem}details summary{width:fit-content;padding:0.8rem;border-radius:1rem;border:2px solid #ccc}</style><title>ESP8266/32 Joystick Control</title></head><body><div class='container'><div id='status' class='status-label status-disconnected'>Disconnected</div><div class='buttons'><button id='switch1' class='button' onclick='toggleSwitch(1)'>SW 1</button><button id='switch2' class='button' onclick='toggleSwitch(2)'>SW 2</button><button id='switch3' class='button' onclick='toggleSwitch(3)'>SW 3</button><button id='switch4' class='button' onclick='toggleSwitch(4)'>SW 4</button><button id='push1' class='button' onmousedown='sendPushData(1, 1)' onmouseup='sendPushData(1, 0)' ontouchstart='sendPushData(1, 1)' ontouchend='sendPushData(1, 0)'>Push 1</button><button id='push2' class='button' onmousedown='sendPushData(2, 1)' onmouseup='sendPushData(2, 0)' ontouchstart='sendPushData(2, 1)' ontouchend='sendPushData(2, 0)'>Push 2</button><button id='push3' class='button' onmousedown='sendPushData(3, 1)' onmouseup='sendPushData(3, 0)' ontouchstart='sendPushData(3, 1)' ontouchend='sendPushData(3, 0)'>Push 3</button><button id='push4' class='button' onmousedown='sendPushData(4, 1)' onmouseup='sendPushData(4, 0)' ontouchstart='sendPushData(4, 1)' ontouchend='sendPushData(4, 0)'>Push 4</button></div><div class='check-button-container'><label class='common-label' for='toggle-return'>RTH:</label><input class='toggle-checkbox' type='checkbox' id='toggle-return' onchange='handleToggleChange()'><label class='common-label' for='toggle-sl'>SL:</label><input class='toggle-checkbox' type='checkbox' id='toggle-sl' onchange='handleSL()'></div><div class='joystick-container'><div class='joystick' id='joystick'></div></div><div class='sliders'><div class='slider-container'><label class='common-label' id='labelslider1' for='slider1'>Slider 1: 0</label><input type='range' id='slider1' class='slider' min='0' max='100' value='0' onchange='sendSlider1Data()'></div><div class='slider-container'><label class='common-label' id='labelslider2' for='slider2'>Slider 2: 0</label><input type='range' id='slider2' class='slider' min='0' max='100' value='0' onchange='sendSlider2Data()'></div></div><div class='buttons'><button id='switch5' class='button' onclick='toggleSwitch(5)'>SW 5</button><button id='switch6' class='button' onclick='toggleSwitch(6)'>SW 6</button><button id='switch7' class='button' onclick='toggleSwitch(7)'>SW 7</button><button id='switch8' class='button' onclick='toggleSwitch(8)'>SW 8</button><button id='push5' class='button' onmousedown='sendPushData(5, 1)' onmouseup='sendPushData(5, 0)' ontouchstart='sendPushData(5, 1)' ontouchend='sendPushData(5, 0)'>Push 5</button><button id='push6' class='button' onmousedown='sendPushData(6, 1)' onmouseup='sendPushData(6, 0)' ontouchstart='sendPushData(6, 1)' ontouchend='sendPushData(6, 0)'>Push 6</button><button id='push7' class='button' onmousedown='sendPushData(7, 1)' onmouseup='sendPushData(7, 0)' ontouchstart='sendPushData(7, 1)' ontouchend='sendPushData(7, 0)'>Push 7</button><button id='push8' class='button' onmousedown='sendPushData(8, 1)' onmouseup='sendPushData(8, 0)' ontouchstart='sendPushData(8, 1)' ontouchend='sendPushData(8, 0)'>Push 8</button></div><details><summary>Robot Logs</summary><div id='logs' class='logs'></div></details><script>const joystick = document.getElementById('joystick');
+<html lang='en'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><link rel='icon' href='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%221em%22 font-size=%2280%22>🎮</text></svg>'><style>:root{--clr-text-on-dark-bg:white;--clr-bg-1:#f0f0f0;--clr-bg-2:#e0e0e0;--clr-bg-3:#ccc;--clr-bg-joy:radial-gradient(circle,var(--clr-bg-1),var(--clr-bg-3));--clr-bg-cont:linear-gradient(135deg,var(--clr-bg-1),var(--clr-bg-2));--clr-btn:#28a745;--clr-success:#28a745;--clr-failed:#dc3545;--clr-brd-joy:1px solid #bbb}*{box-sizing:border-box}body{font-family:'Arial',sans-serif;font-size:16px;display:flex;flex-direction:column;align-items:center;justify-content:top;margin:0;padding:0;background-color:var(--clr-bg-1);box-sizing:border-box}.container{display:flex;flex-direction:column;align-items:center;gap:5px;padding:0px 0.5rem 0px 0.5rem;background:var(--clr-bg-cont);border:1px solid #ccc;border-radius:1rem;box-shadow:0 4px 8px rgba(0,0,0,0.1);width:100%}@media (min-width:768px){.container{width:400px;margin:1rem}}.joystick-container{position:relative;width:70%;aspect-ratio:1/1;background:var(--clr-bg-joy);border-radius:50%;box-shadow:0 8px 16px rgba(0,0,0,0.2);border:1px solid var(--clr-brd-joy);display:flex;justify-content:center;align-items:center}.joystick-container::before,.joystick-container::after{content:'';position:absolute;background-color:#cfcfcf}.joystick-container::before{width:1px;height:100%;top:0;left:50%;transform:translateX(-50%)}.joystick-container::after{width:100%;height:1px;top:50%;left:0;transform:translateY(-50%)}.joystick{position:absolute;width:70px;height:70px;background:radial-gradient(circle,#007bff,#0056b3);border-radius:50%;top:50%;left:50%;transform:translate(-50%,-50%);box-shadow:0 8px 16px rgba(0,0,0,0.2);touch-action:none;border:2px solid #004080;z-index:1}.sliders{width:100%;display:flex;flex-direction:column;justify-content:center;align-items:center;padding:10px;gap:10px}.slider-container{width:100%;display:flex;flex-direction:column;align-items:center}.slider{-webkit-appearance:none;appearance:none;width:100%;height:15px;background:linear-gradient(to right,green,red);outline:none;opacity:0.7;transition:opacity .2s;border-radius:10px}.slider:hover{opacity:1}.slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:25px;height:25px;background:#4CAF50;cursor:pointer;border-radius:5px}.slider::-moz-range-thumb{width:25px;height:30px;background:#4CAF50;cursor:pointer;border-radius:5px}.buttons{width:100%;display:flex;justify-content:space-around;flex-wrap:wrap;gap:0.5rem}.button{height:60px;width:20%;background-color:var(--clr-btn);border:none;color:var(--clr-text-on-dark-bg);font-size:16px;border-radius:10px;box-shadow:0 4px 8px rgba(0,0,0,0.2);cursor:pointer;transition:background-color 0.3s ease;margin:5px;user-select:none}.button.switch-on{background-color:#ff0707}.button.push-active{background-color:#0056b3;user-select:none}.common-label{font-size:16px;font-weight:bold;margin-right:1px;color:#333}.toggle-checkbox{width:20px;height:20px;cursor:pointer;accent-color:#007bff}.check-button-container{display:flex;justify-content:left;width:100%;align-items:center;gap:5px}header{width:100%;display:flex;justify-content:space-between;align-items:top;margin-bottom:1rem}.menu-toggle{line-height:normal;font-size:2rem;color:gray;padding:0.5rem}.status-label{font-size:1rem;font-weight:bold;height:fit-content;padding:5px 10px;border-radius:0 0 0.5rem 0.5rem;color:var(--clr-text-on-dark-bg)}.status-connected{background-color:var(--clr-success)}.status-disconnected{background-color:var(--clr-failed)}details{width:100%;padding:0.5rem}details summary{width:fit-content;padding:0.8rem;border-radius:1rem;border:2px solid #ccc}.overlay{height:100%;width:0;position:fixed;z-index:2;left:0;top:0;background-color:rgba(0,0,0,0.9);color:var(--clr-text-on-dark-bg);overflow-x:hidden;overflow-y:auto;transition:0.5s}.overlay-content{position:relative;top:10%;padding:1rem}.overlay .closebtn{color:#818181;text-decoration:none;position:absolute;top:20px;right:45px;font-size:60px}</style><title>Robot controller</title></head><body><div id='terminalOverlay' class='overlay'><a href='javascript:void(0)' class='closebtn' onclick='closeLogMenu()'>x</a><div class='overlay-content'><div id='logs' class='logs'></div></div></div><dialog id='optionsOverlay'><button onclick='closeOptionsMenu()'>Close</button><p>This modal dialog has a groovy backdrop!</p></dialog><div class='container'><header><div class='menu-toggle'><span onclick='openLogMenu()'><\></span></div><div id='status' class='status-label status-disconnected'>Disconnected</div><div class='menu-toggle'><span onclick='openOptionsMenu()'>O</span></div></header><div><p>placeholder for sensor meassurements</p></div><div class='check-button-container'><label class='common-label' for='toggle-return'>RTH:</label><input class='toggle-checkbox' type='checkbox' id='toggle-return' onchange='handleToggleChange()'><label class='common-label' for='toggle-sl'>SL:</label><input class='toggle-checkbox' type='checkbox' id='toggle-sl' onchange='handleSL()'></div><div style='text-align: center;'><span id='joystick-value-display'></span></div><div class='joystick-container'><div class='joystick' id='joystick'></div></div><div class='sliders'><div class='slider-container'><label class='common-label' id='labelslider1' for='slider1'>Acceleration</label><input type='range' id='slider1' class='slider' min='0' max='100' value='0' onchange="sendSliderData('slider1')"></div><div class='slider-container'><label class='common-label' id='labelslider2' for='slider2'>Slider 2: 0</label><input type='range' id='slider2' class='slider' min='0' max='100' value='0' onchange="sendSliderData('slider2')"></div></div><div class='buttons'><button id='switch5' class='button' onclick='toggleSwitch(5)'>SW 5</button><button id='switch6' class='button' onclick='toggleSwitch(6)'>SW 6</button><button id='switch7' class='button' onclick='toggleSwitch(7)'>SW 7</button><button id='switch8' class='button' onclick='toggleSwitch(8)'>SW 8</button><button id='push5' class='button' onmousedown='sendPushData(5, 1)' onmouseup='sendPushData(5, 0)' ontouchstart='sendPushData(5, 1)' ontouchend='sendPushData(5, 0)'>Push 5</button><button id='push6' class='button' onmousedown='sendPushData(6, 1)' onmouseup='sendPushData(6, 0)' ontouchstart='sendPushData(6, 1)' ontouchend='sendPushData(6, 0)'>Push 6</button><button id='push7' class='button' onmousedown='sendPushData(7, 1)' onmouseup='sendPushData(7, 0)' ontouchstart='sendPushData(7, 1)' ontouchend='sendPushData(7, 0)'>Push 7</button><button id='push8' class='button' onmousedown='sendPushData(8, 1)' onmouseup='sendPushData(8, 0)' ontouchstart='sendPushData(8, 1)' ontouchend='sendPushData(8, 0)'>Push 8</button></div><script>const joystick = document.getElementById('joystick');
 const joystickContainer = document.querySelector('.joystick-container');
-const slider1 = document.getElementById('slider1');
-const slider2 = document.getElementById('slider2');
 const toggleReturn = document.getElementById('toggle-return');
 const statusLabel = document.getElementById('status');
 
-const url = `ws://${window.location.hostname}/ws`;  // Replace with your server's IP and port
+const url = `ws://${window.location.hostname}/ws`;
 
 let joystickOffset = { x: 0, y: 0 };
 let isDragging = false;
@@ -66,13 +64,13 @@ function sendData(dataObject) {
 
 // Send joystick position
 function sendJoystickAndMotorData(x, y) {
-    
+
     // Make the stop command priority to always send it
     let priority = false
     if (x === 0 && y === 0) {
         priority = true;
     }
-    
+
     // send the normal packages with a 200ms interval, to prevent overloading the server
     // the priority packages can be sent anytime
     if (!priority && sendJoystickAndMotorData.lastSent && Date.now() - sendJoystickAndMotorData.lastSent < 200) {
@@ -81,14 +79,21 @@ function sendJoystickAndMotorData(x, y) {
     sendJoystickAndMotorData.lastSent = Date.now();
 
     // Send joystick data to server
-    const data = { type: 'joystick', x: Math.round(x * 127), y: Math.round(y * (-127)) };
+    const joyX = Math.round(x * 127);
+    const joyY = Math.round(y * (-127));
+    const data = { type: 'joystick', x: joyX, y: joyY };
     sendData(data, priority);
+    console.log("Joystick data sent: ", data);
 
     // limit rotation to 50% throttle
     x = x * 0.5;
 
     // Send motor data to server
     const motorData = convertJoystickDataToMotorData(x, y);
+
+    // show data on joysticks value display
+    document.getElementById('joystick-value-display').innerHTML = `joyX: ${joyX} joyY: ${joyY}; motor1: ${motorData.motor1} motor2: ${motorData.motor2}`;
+
     sendMotorData("leftDrive", motorData.motor1);
     sendMotorData("rightDrive", motorData.motor2);
 }
@@ -134,17 +139,10 @@ function sendMotorData(id, x) {
 }
 
 // Send slider data
-function sendSlider1Data() {
-    const data = { slider1: slider1.value };
+function sendSliderData(id) {
+    const data = { type: 'slider', id: id, value: document.getElementById(id).value };
     // set the slider label to the slider name and then value of the slider like Slider 1: 50
-    document.getElementById('labelslider1').innerHTML = "Slider 1: " + slider1.value;
-    sendData(data)
-}
-
-// Send slider data
-function sendSlider2Data() {
-    const data = { slider2: slider2.value };
-    document.getElementById('labelslider2').innerHTML = "Slider 2: " + slider2.value;
+    document.getElementById('label' + id).innerHTML = "Acceleration: " + slider1.value;
     sendData(data)
 }
 
@@ -282,4 +280,22 @@ function handleSL() {
     }
 }
 
-window.onload = initWebSocket(url);</script></div></body></html>
+window.onload = initWebSocket(url);
+
+/* Open when someone clicks on the span element */
+function openLogMenu() {
+    document.getElementById("terminalOverlay").style.width = "100%";
+}
+
+/* Close when someone clicks on the "x" symbol inside the overlay */
+function closeLogMenu() {
+    document.getElementById("terminalOverlay").style.width = "0%";
+}
+
+function openOptionsMenu() {
+    document.getElementById("optionsOverlay").showModal();
+}
+
+function closeOptionsMenu() {
+    document.getElementById("optionsOverlay").close();
+}</script></div></body></html>

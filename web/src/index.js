@@ -64,13 +64,13 @@ function sendData(dataObject) {
 
 // Send joystick position
 function sendJoystickAndMotorData(x, y) {
-    
+
     // Make the stop command priority to always send it
     let priority = false
     if (x === 0 && y === 0) {
         priority = true;
     }
-    
+
     // send the normal packages with a 200ms interval, to prevent overloading the server
     // the priority packages can be sent anytime
     if (!priority && sendJoystickAndMotorData.lastSent && Date.now() - sendJoystickAndMotorData.lastSent < 200) {
@@ -79,7 +79,9 @@ function sendJoystickAndMotorData(x, y) {
     sendJoystickAndMotorData.lastSent = Date.now();
 
     // Send joystick data to server
-    const data = { type: 'joystick', x: Math.round(x * 127), y: Math.round(y * (-127)) };
+    const joyX = Math.round(x * 127);
+    const joyY = Math.round(y * (-127));
+    const data = { type: 'joystick', x: joyX, y: joyY };
     sendData(data, priority);
     console.log("Joystick data sent: ", data);
 
@@ -88,6 +90,10 @@ function sendJoystickAndMotorData(x, y) {
 
     // Send motor data to server
     const motorData = convertJoystickDataToMotorData(x, y);
+
+    // show data on joysticks value display
+    document.getElementById('joystick-value-display').innerHTML = `joyX: ${joyX} joyY: ${joyY}; motor1: ${motorData.motor1} motor2: ${motorData.motor2}`;
+
     sendMotorData("leftDrive", motorData.motor1);
     sendMotorData("rightDrive", motorData.motor2);
 }
@@ -276,10 +282,20 @@ function handleSL() {
 
 window.onload = initWebSocket(url);
 
+/* Open when someone clicks on the span element */
 function openLogMenu() {
+    document.getElementById("terminalOverlay").style.width = "100%";
+}
 
+/* Close when someone clicks on the "x" symbol inside the overlay */
+function closeLogMenu() {
+    document.getElementById("terminalOverlay").style.width = "0%";
 }
 
 function openOptionsMenu() {
+    document.getElementById("optionsOverlay").showModal();
+}
 
+function closeOptionsMenu() {
+    document.getElementById("optionsOverlay").close();
 }

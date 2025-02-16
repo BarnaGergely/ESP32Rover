@@ -2,6 +2,7 @@
 
 ## Tasks
 
+- On the boot the motors move a little. Fox it!
 - Fix GZIP compression
 - Refactor slider json format. It is a mess.
   - Refactore sliders to work like buttons (make easier to have any number of sliders)
@@ -19,6 +20,18 @@
 <https://github.com/TheArduinist/DRV8833>
 <https://parvaiz.pk/posts/virtual-joystick-for-arduino/>
 <https://github.com/parvaizahmad/virtualJoystickESP>
+
+https://lastminuteengineers.com/wemos-d1-mini-pinout-reference/
+https://lastminuteengineers.com/arduino-sr04-ultrasonic-sensor-tutorial/
+https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home
+
+## Pinout
+
+- D4 - Built-in LED
+- D3 - Right HW-201
+- D2 - Left HW-201
+- D1 - HC-SR04 Echo
+- D8 - HC-SR04 Trigger
 
 ## Running gzip test server
 

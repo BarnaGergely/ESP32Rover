@@ -1,9 +1,12 @@
 :root {
+    --clr-text-on-dark-bg: white;
+
     --clr-bg-1: #f0f0f0; /* main background color */
     --clr-bg-2: #e0e0e0;
     --clr-bg-3: #ccc;
     --clr-bg-joy: radial-gradient(circle, var(--clr-bg-1), var(--clr-bg-3)); /* joystick background color */
     --clr-bg-cont: linear-gradient(135deg, var(--clr-bg-1), var(--clr-bg-2)); /* container background color */
+
     --clr-btn: #28a745; /* button color */
 
     --clr-success: #28a745; /* success color eg.: connected  */
@@ -27,7 +30,6 @@ body {
     justify-content: top;
     margin: 0;
     padding: 0;
-    color: black;
     background-color: var(--clr-bg-1);
     box-sizing: border-box;
 }
@@ -56,7 +58,7 @@ body {
 
 .joystick-container {
     position: relative;
-    width: 100%;
+    width: 70%;
     aspect-ratio: 1/1;
     background: var(--clr-bg-joy); /* Gradient background */
     border-radius: 50%;
@@ -92,8 +94,8 @@ body {
 
 .joystick {
     position: absolute;
-    width: 50px;
-    height: 50px;
+    width: 70px;
+    height: 70px;
     background: radial-gradient(circle, #007bff, #0056b3); /* Gradient background */
     border-radius: 50%;
     top: 50%;
@@ -103,19 +105,6 @@ body {
     touch-action: none;
     border: 2px solid #004080; /* Border for a more defined look */
     z-index: 1;
-}
-
-.joystick::before {
-    content: '';
-    position: absolute;
-    width: 10px; /* Size of the red dot */
-    height: 10px; /* Size of the red dot */
-    background-color: rgb(121, 25, 25);
-    border-radius: 50%;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); /* Subtle shadow for the dot */
 }
 
 .sliders {
@@ -179,7 +168,7 @@ body {
     width: 20%;
     background-color: var(--clr-btn);
     border: none;
-    color: white;
+    color: var(--clr-text-on-dark-bg);
     font-size: 16px;
     border-radius: 10px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -222,22 +211,24 @@ header {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    align-items: center;
+    align-items: top;
     margin-bottom: 1rem;
 }
 
 .menu-toggle {
     line-height: normal;
-    font-size: 1.5rem;
+    font-size: 2rem;
     color: gray;
+    padding: 0.5rem;
 }
 
 .status-label {
     font-size: 1rem;
     font-weight: bold;
+    height: fit-content;
     padding: 5px 10px;
     border-radius: 0 0 0.5rem 0.5rem;
-    color: #fff;
+    color: var(--clr-text-on-dark-bg);
 }
 
 .status-connected {
@@ -258,4 +249,40 @@ details summary {
     padding: 0.8rem;
     border-radius: 1rem;
     border: 2px solid #ccc;
+}
+
+
+/*------------------------------------------------------------------------------------------------------*/
+
+/* The Overlay (background) */
+.overlay {
+    /* Height & width depends on how you want to reveal the overlay (see JS below) */   
+    height: 100%;
+    width: 0;
+    position: fixed; /* Stay in place */
+    z-index: 2; /* Sit on top */
+    left: 0;
+    top: 0;
+    background-color: rgba(0,0,0, 0.9); /* Black w/opacity */
+    color: var(--clr-text-on-dark-bg);
+    overflow-x: hidden; /* Disable horizontal scroll */
+    overflow-y: auto; /* Enable vertical scroll */
+    transition: 0.5s; /* 0.5 second transition effect to slide in or slide down the overlay (height or width, depending on reveal) */
+}
+  
+/* Position the content inside the overlay */
+.overlay-content {
+    position: relative;
+    top: 10%; /* 25% from the top */
+    padding: 1rem;
+}
+  
+/* Position the close button (top right corner) */
+.overlay .closebtn {
+    color: #818181;
+    text-decoration: none;
+    position: absolute;
+    top: 20px;
+    right: 45px;
+    font-size: 60px;
 }

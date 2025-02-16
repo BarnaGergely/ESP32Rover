@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="color-scheme" content="dark light">
+    <!-- <meta name="color-scheme" content="dark light"> -->
     <link rel="icon"
         href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%221em%22 font-size=%2280%22>🎮</text></svg>">
     <link rel="stylesheet" href="index.css">
@@ -12,26 +12,34 @@
 </head>
 
 <body>
+    <div id="terminalOverlay" class="overlay">
+
+        <!-- Button to close the overlay navigation -->
+        <a href="javascript:void(0)" class="closebtn" onclick="closeLogMenu()">x</a>
+
+        <!-- Overlay content -->
+        <div class="overlay-content">
+            <div id="logs" class="logs">
+            </div>
+        </div>
+
+    </div>
+
+    <dialog id="optionsOverlay">
+        <button onclick="closeOptionsMenu()">Close</button>
+        <p>This modal dialog has a groovy backdrop!</p>
+    </dialog>
+
+
     <div class="container">
         <header>
-            <div class="menu-toggle"><a onclick="openLogMenu()">&#60\&#62</a></div>
+            <div class="menu-toggle"><span onclick="openLogMenu()">&#60\&#62</span></div>
             <div id="status" class="status-label status-disconnected">Disconnected</div>
-            <div class="menu-toggle"><a onclick="openOptionsMenu()">⚙️</a></div>
+            <div class="menu-toggle"><span onclick="openOptionsMenu()">O</span></div>
         </header>
 
-        <div class="buttons">
-            <button id="switch1" class="button" onclick="toggleSwitch(1)">SW 1</button>
-            <button id="switch2" class="button" onclick="toggleSwitch(2)">SW 2</button>
-            <button id="switch3" class="button" onclick="toggleSwitch(3)">SW 3</button>
-            <button id="switch4" class="button" onclick="toggleSwitch(4)">SW 4</button>
-            <button id="push1" class="button" onmousedown="sendPushData(1, 1)" onmouseup="sendPushData(1, 0)"
-                ontouchstart="sendPushData(1, 1)" ontouchend="sendPushData(1, 0)">Push 1</button>
-            <button id="push2" class="button" onmousedown="sendPushData(2, 1)" onmouseup="sendPushData(2, 0)"
-                ontouchstart="sendPushData(2, 1)" ontouchend="sendPushData(2, 0)">Push 2</button>
-            <button id="push3" class="button" onmousedown="sendPushData(3, 1)" onmouseup="sendPushData(3, 0)"
-                ontouchstart="sendPushData(3, 1)" ontouchend="sendPushData(3, 0)">Push 3</button>
-            <button id="push4" class="button" onmousedown="sendPushData(4, 1)" onmouseup="sendPushData(4, 0)"
-                ontouchstart="sendPushData(4, 1)" ontouchend="sendPushData(4, 0)">Push 4</button>
+        <div>
+            <p>placeholder for sensor meassurements</p>
         </div>
 
         <div class="check-button-container">
@@ -39,16 +47,15 @@
             <input class="toggle-checkbox" type="checkbox" id="toggle-return" checked onchange="handleToggleChange()">
             <label class="common-label" for="toggle-sl">SL:</label>
             <input class="toggle-checkbox" type="checkbox" id="toggle-sl" checked onchange="handleSL()">
-
-
         </div>
+        <div style="text-align: center;"><span id="joystick-value-display"></span></div>
         <div class="joystick-container">
             <div class="joystick" id="joystick"></div>
         </div>
 
         <div class="sliders">
             <div class="slider-container">
-                <label class="common-label" id="labelslider1" for="slider1">Slider 1: 0</label>
+                <label class="common-label" id="labelslider1" for="slider1">Acceleration</label>
                 <input type="range" id="slider1" class="slider" min="0" max="100" value="0"
                     onchange="sendSliderData('slider1')">
             </div>
@@ -74,12 +81,6 @@
                 ontouchstart="sendPushData(8, 1)" ontouchend="sendPushData(8, 0)">Push 8</button>
         </div>
 
-        <details>
-            <summary>Robot Logs</summary>
-            <div id="logs" class="logs">
-
-            </div>
-        </details>
         <script src="index.js"></script>
     </div>
 </body>

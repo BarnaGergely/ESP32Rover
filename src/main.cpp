@@ -31,20 +31,29 @@ Critical error : This program is ESP32 or ESP8266 only
 #include <ArduinoJson.h>
 #include <DRV8833MotorDriver.h>
 #include <ESPAsyncWebServer.h>
+#include <HCSR04.h>
 #include <LedBlinker.h>
 #include <LittleFS.h>
 #include <SimpleDebugLog.h>
 #include <SimpleWebSocketLog.h>
+#include <arduino-timer.h>
 
 #ifdef DEVELOPER_MODE
 // #define WOKWI  // In developer mode, turn on features for WokWi simulation
 #endif
 
-#define MOTOR_LEFT_PIN1 13   // D7 on D1 Mini
-#define MOTOR_LEFT_PIN2 12   // D6 on D1 Mini
+#define ULTRASONIC_SENSOR_TRIGGER_PIN D3    // D3 on D1 Mini
+#define ULTRASONIC_SENSOR_ECHO_PIN D1       // D1 on D1 Mini
+#define ULTRASONIC_SENSOR_MAX_DISTANCE 200  // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400.
+
+#define LEFT_GROUND_SENSOR_PIN D8   // D8 on D1 Mini
+#define RIGHT_GROUND_SENSOR_PIN A0  // A0 on D1 Mini
+
+#define MOTOR_LEFT_PIN1 D7  // D7 on D1 Mini
+#define MOTOR_LEFT_PIN2 D6  // D6 on D1 Mini
 #define MOTOR_LEFT_INVERT true
-#define MOTOR_RIGHT_PIN1 14  // D5 on D1 Mini
-#define MOTOR_RIGHT_PIN2 16  // D0 on D1 Mini
+#define MOTOR_RIGHT_PIN1 D5  // D5 on D1 Mini
+#define MOTOR_RIGHT_PIN2 D0  // D0 on D1 Mini
 #define MOTOR_RIGHT_INVERT false
 
 #define MOTOR_DRIVER_MAX_PWM 127
@@ -58,7 +67,7 @@ Critical error : This program is ESP32 or ESP8266 only
 // a valid password must have more than 7 characters
 #define WIFI_PASSWORD ""
 
-DRV8833 DRVLeft(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_LEFT_INVERT);
+                                              DRV8833 DRVLeft(MOTOR_LEFT_PIN1, MOTOR_LEFT_PIN2, MOTOR_LEFT_INVERT);
 DRV8833 DRVRight(MOTOR_RIGHT_PIN1, MOTOR_RIGHT_PIN2, MOTOR_RIGHT_INVERT);
 
 // Global variables:
@@ -71,6 +80,9 @@ IPAddress myIP;
 // DNSServer dnsServer;
 AsyncWebServer server(80);
 AsyncWebSocket ws("/ws");
+
+auto timer = timer_create_default();  // create a timer with default settings
+
 /*
 class CaptiveRequestHandler : public AsyncWebHandler {
    public:
@@ -90,12 +102,13 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len);
 void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsEventType type, void *arg, uint8_t *data, size_t len);
 int setupWebSocketServer();
 void handlePingHttpRequest(AsyncWebServerRequest *request);
+bool measureWithAllSensors(void *);
 
 // Main program:
 void setup() {
     // Initialize the motor drivers
-    motorLeft.filter.setFilterFactor(20);
-    motorRight.filter.setFilterFactor(20);
+    motorLeft.filter.setFilterFactor(25);
+    motorRight.filter.setFilterFactor(25);
     motorLeft.begin();
     motorRight.begin();
 
@@ -107,37 +120,28 @@ void setup() {
     builtInLed.begin();
     builtInLed.blinkContinuously(2000, 200);
 
-    if (setupWifi()) {
-        LOG_ERROR("WiFi setup failed.");
-    }
-
-    if (setupWebServer()) {
-        LOG_ERROR("Web server setup failed.");
-    }
-
-    if (setupWebSocketServer()) {
-        LOG_ERROR("WebSocket server setup failed.");
-    }
-
+    if (setupWifi()) LOG_ERROR("WiFi setup failed.");
+    if (setupWebServer()) LOG_ERROR("Web server setup failed.");
+    if (setupWebSocketServer()) LOG_ERROR("WebSocket server setup failed.");
     server.begin();
 
+    // Mount the file system
 #ifndef WOKWI
 #ifdef ESP32
-    if (!LittleFS.begin(true)) {
-        LOG_ERROR("LittleFS Mount Failed");
-    }
+    if (!LittleFS.begin(true)) LOG_ERROR("LittleFS Mount Failed");
 #else
-    if (!LittleFS.begin()) {
-        LOG_ERROR("LittleFS Mount Failed");
-    }
+    if (!LittleFS.begin()) LOG_ERROR("LittleFS Mount Failed");
 #endif
 #endif
-    if (!LittleFS.exists("/index.html")) {
-        LOG_ERROR("index.html not found in LittleFS");
-    }
-    if (!LittleFS.exists("/index.html.gz")) {
-        LOG_ERROR("index.html.gz not found in LittleFS");
-    }
+    if (!LittleFS.exists("/index.html")) LOG_ERROR("index.html not found in LittleFS");
+    if (!LittleFS.exists("/index.html.gz")) LOG_ERROR("index.html.gz not found in LittleFS");
+
+    // setup sensors
+    pinMode(LEFT_GROUND_SENSOR_PIN, INPUT);
+    pinMode(RIGHT_GROUND_SENSOR_PIN, INPUT);
+    HCSR04.begin(ULTRASONIC_SENSOR_TRIGGER_PIN, ULTRASONIC_SENSOR_ECHO_PIN);
+    timer.every(500, measureWithAllSensors);
+
     LOG_INFO("Setup completed, time: ", millis());
 }
 
@@ -145,7 +149,9 @@ void loop() {
     motorLeft.run();
     motorRight.run();
     builtInLed.run();
-    ws.cleanupClients(); // TODO: only run it in every 2 sec based on WebSockets example: https://github.com/ESP32Async/ESPAsyncWebServer/blob/main/examples/WebSocket/WebSocket.ino
+    ws.cleanupClients();  // TODO: only run it in every 2 sec based on WebSockets example:
+                          // https://github.com/ESP32Async/ESPAsyncWebServer/blob/main/examples/WebSocket/WebSocket.ino
+    timer.tick();
     // dnsServer.processNextRequest();
 #ifdef WOKWI
     delay(10);  // this speeds up the WokWi simulation
@@ -261,7 +267,7 @@ void handleWebSocketMessage(void *arg, uint8_t *data, size_t len) {
         if (doc["id"] == "slider1") {
             motorLeft.filter.setFilterFactor(doc["value"].as<int>());
             motorRight.filter.setFilterFactor(doc["value"].as<int>());
-            
+
             LOG_WEBSOCKET("Acceleration set to: %d", doc["value"].as<int>());
         }
 
@@ -321,4 +327,39 @@ int setupWebSocketServer() {
     ws.onEvent(onWebSocketEvent);
     server.addHandler(&ws);
     return 0;
+}
+
+bool measureWithAllSensors(void *) {
+    LOG_DEBUG("Measuring with all sensors");
+    static bool leftGroundPrev = false;
+    static bool rightGroundPrev = false;
+    static int distancePrev = -1;
+
+    bool leftGround = digitalRead(LEFT_GROUND_SENSOR_PIN);
+    bool rightGround = digitalRead(RIGHT_GROUND_SENSOR_PIN);
+    double *distances = HCSR04.measureDistanceCm(); // returns an array, because the library supports multiple sensors
+
+    int distance = (int)distances[0]; // the ultrasonic sensor is very inaccurate, so we don't need the decimal part
+
+    LOG_DEBUG("Left ground sensor value: ", leftGround);
+    LOG_DEBUG("Right ground sensor value: ", rightGround);
+    LOG_DEBUG("Ultrasonic sensor distance: ", distance);
+
+    // TODO: crashes somwhere here
+    if (leftGround != leftGroundPrev) {
+        LOG_WEBSOCKET("Left ground sensor value changed: %d", leftGround);
+        leftGroundPrev = leftGround;
+    }
+
+    if (rightGround != rightGroundPrev) {
+        LOG_WEBSOCKET("Right ground sensor value changed: %d", rightGround);
+        rightGroundPrev = rightGround;
+    }
+
+    if (distance != distancePrev) {
+        LOG_WEBSOCKET("Ultrasonic sensor distance changed: %d cm", distance);
+        distancePrev = distance;
+    }
+
+    return true;  // to repeat the action - false to stop
 }
