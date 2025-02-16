@@ -21,7 +21,7 @@ Critical error : This program is ESP32 or ESP8266 only
 #define DEVELOPER_MODE  // Comment this line to disable debug logs and build the app in release mode
 
 #ifdef DEVELOPER_MODE
-#define DEBUGLOG_DEFAULT_LOG_LEVEL_DEBUG  // In debug mode, set the default log level to INFO in DebugLog library
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_TRACE  // In debug mode, set the default log level to INFO in DebugLog library
 #endif
 
 #ifndef DEVELOPER_MODE
@@ -46,8 +46,8 @@ Critical error : This program is ESP32 or ESP8266 only
 #define ULTRASONIC_SENSOR_ECHO_PIN D1       // D1 on D1 Mini
 #define ULTRASONIC_SENSOR_MAX_DISTANCE 200  // Maximum distance we want to ping for (in centimeters). Maximum sensor distance is rated at 400.
 
-#define LEFT_GROUND_SENSOR_PIN D8   // D8 on D1 Mini
-#define RIGHT_GROUND_SENSOR_PIN A0  // A0 on D1 Mini
+#define LEFT_GROUND_SENSOR_PIN D2   // D2 on D1 Mini
+#define RIGHT_GROUND_SENSOR_PIN D8  // D8 on D1 Mini
 
 #define MOTOR_LEFT_PIN1 D7  // D7 on D1 Mini
 #define MOTOR_LEFT_PIN2 D6  // D6 on D1 Mini
@@ -103,6 +103,9 @@ void onWebSocketEvent(AsyncWebSocket *server, AsyncWebSocketClient *client, AwsE
 int setupWebSocketServer();
 void handlePingHttpRequest(AsyncWebServerRequest *request);
 bool measureWithAllSensors(void *);
+int sendDataToWebSocket(const char *type, const char *data);
+int sendDataToWebSocket(const char *type, int data);
+int sendDataToWebSocket(const char *type, bool data);
 
 // Main program:
 void setup() {
@@ -331,35 +334,49 @@ int setupWebSocketServer() {
 
 bool measureWithAllSensors(void *) {
     LOG_DEBUG("Measuring with all sensors");
-    static bool leftGroundPrev = false;
-    static bool rightGroundPrev = false;
+    static int leftGroundPrev = false;
+    static int rightGroundPrev = false;
     static int distancePrev = -1;
 
-    bool leftGround = digitalRead(LEFT_GROUND_SENSOR_PIN);
-    bool rightGround = digitalRead(RIGHT_GROUND_SENSOR_PIN);
-    double *distances = HCSR04.measureDistanceCm(); // returns an array, because the library supports multiple sensors
+    int leftGround = digitalRead(LEFT_GROUND_SENSOR_PIN);
+    int rightGround = digitalRead(RIGHT_GROUND_SENSOR_PIN);
+    double *distances = HCSR04.measureDistanceCm();  // returns an array, because the library supports multiple sensors
 
-    int distance = (int)distances[0]; // the ultrasonic sensor is very inaccurate, so we don't need the decimal part
+    int distance = (int)distances[0];  // the ultrasonic sensor is very inaccurate, so we don't need the decimal part
 
-    LOG_DEBUG("Left ground sensor value: ", leftGround);
-    LOG_DEBUG("Right ground sensor value: ", rightGround);
-    LOG_DEBUG("Ultrasonic sensor distance: ", distance);
+    LOG_TRACE("Left ground sensor value: ", leftGround);
+    LOG_TRACE("Right ground sensor value: ", rightGround);
+    LOG_TRACE("Ultrasonic sensor distance: ", distance);
 
-    // TODO: crashes somwhere here
     if (leftGround != leftGroundPrev) {
         LOG_WEBSOCKET("Left ground sensor value changed: %d", leftGround);
+        sendDataToWebSocket("leftGround", leftGround);
         leftGroundPrev = leftGround;
     }
 
     if (rightGround != rightGroundPrev) {
         LOG_WEBSOCKET("Right ground sensor value changed: %d", rightGround);
+        sendDataToWebSocket("rightGround", rightGround);
         rightGroundPrev = rightGround;
     }
 
     if (distance != distancePrev) {
         LOG_WEBSOCKET("Ultrasonic sensor distance changed: %d cm", distance);
+        sendDataToWebSocket("sonar", distance);
         distancePrev = distance;
     }
 
     return true;  // to repeat the action - false to stop
 }
+
+int sendDataToWebSocket(const char *type, const char *value) {
+    ws.printfAll("{\"type\":\"%s\",\"value\":\"%s\"}", type, value);
+    return 0;
+}
+
+int sendDataToWebSocket(const char *type, int value) {
+    ws.printfAll("{\"type\":\"%s\",\"value\":%d}", type, value);
+    return 0;
+}
+
+int sendDataToWebSocket(const char *type, bool value) { return sendDataToWebSocket(type, value ? "true" : "false"); }

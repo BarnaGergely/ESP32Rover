@@ -38,8 +38,8 @@
             <div class="menu-toggle"><span onclick="openOptionsMenu()">O</span></div>
         </header>
 
-        <div>
-            <p>placeholder for sensor meassurements</p>
+        <div class="sensors-container">
+            <p>Left: <span id="leftGround">?</span> | Sonar: <span id="sonar">?</span> cm | Right: <span id="rightGround">?</span></p>
         </div>
 
         <div class="check-button-container">
@@ -67,7 +67,7 @@
         </div>
 
         <div class="buttons">
-            <button id="switch5" class="button" onclick="toggleSwitch(5)">SW 5</button>
+            <button id="switch5" class="button" onclick="toggleSwitch(5)">Autopilot</button>
             <button id="switch6" class="button" onclick="toggleSwitch(6)">SW 6</button>
             <button id="switch7" class="button" onclick="toggleSwitch(7)">SW 7</button>
             <button id="switch8" class="button" onclick="toggleSwitch(8)">SW 8</button>

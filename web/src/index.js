@@ -43,6 +43,15 @@ function handleWebsocketMessage(event) {
         case "log":
             handleLog(data.message);
             break;
+        case "leftGround":
+            document.getElementById('leftGround').innerHTML = data.value;
+            break;
+        case "rightGround":
+            document.getElementById('rightGround').innerHTML = data.value;
+            break;
+        case "sonar":
+            document.getElementById('sonar').innerHTML = data.value;
+            break;
         default:
             console.log('Unknown message type:', data.type);
             break;
