@@ -67,6 +67,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    touch-action: none; /* Prevent pull-to-refresh and other touch gestures */
+    overscroll-behavior: contain; /* Prevent overscroll behavior */
 }     
 
 .joystick-container::before,

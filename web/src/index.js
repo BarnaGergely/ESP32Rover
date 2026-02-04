@@ -289,7 +289,23 @@ function handleSL() {
     }
 }
 
-window.onload = initWebSocket(url);
+window.onload = function() {
+    initWebSocket(url);
+    
+    // Prevent pull-to-refresh only over the joystick
+    joystickContainer.addEventListener('touchstart', function(e) {
+        // Prevent default to stop pull-to-refresh
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+    
+    joystickContainer.addEventListener('touchmove', function(e) {
+        if (e.cancelable) {
+            e.preventDefault();
+        }
+    }, { passive: false });
+};
 
 /* Open when someone clicks on the span element */
 function openLogMenu() {

@@ -27,7 +27,7 @@
 
     <dialog id="optionsOverlay">
         <button onclick="closeOptionsMenu()">Close</button>
-        <p>This modal dialog has a groovy backdrop!</p>
+        <p>This modal dialog is not used yet!</p>
     </dialog>
 
 
@@ -59,11 +59,11 @@
                 <input type="range" id="slider1" class="slider" min="0" max="100" value="0"
                     onchange="sendSliderData('slider1')">
             </div>
-            <div class="slider-container">
+            <!-- <div class="slider-container">
                 <label class="common-label" id="labelslider2" for="slider2">Slider 2: 0</label>
                 <input type="range" id="slider2" class="slider" min="0" max="100" value="0"
                     onchange="sendSliderData('slider2')">
-            </div>
+            </div> -->
         </div>
 
         <div class="buttons">
@@ -79,6 +79,10 @@
                 ontouchstart="sendPushData(7, 1)" ontouchend="sendPushData(7, 0)">Push 7</button>
             <button id="push8" class="button" onmousedown="sendPushData(8, 1)" onmouseup="sendPushData(8, 0)"
                 ontouchstart="sendPushData(8, 1)" ontouchend="sendPushData(8, 0)">Push 8</button>
+        </div>
+
+        <div style="text-align: center; padding: 0.5rem;">
+            <a href="http://192.168.4.1/" target="_blank">https://192.168.4.1/</a>
         </div>
 
         <script src="index.js"></script>
