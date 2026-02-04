@@ -39,9 +39,16 @@ TODO: Introduction
 
 ## Tasks
 
-- improve sensor UI
+Required:
+
+- Load the website from program memory instead of SPIFFS
 - fix enable by default joy center and scroll lock
   - fix: HTML merging removes checked from checkboxs
+
+Optional:
+
+- Fix Captive portal redirection to the control panel
+- improve sensor UI
 - add falling warning
 - add emergency stop
 - On falling, emergency stop

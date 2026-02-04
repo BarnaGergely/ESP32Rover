@@ -132,10 +132,16 @@ def compress_file():
     
     with open(f"{temp_folder}/{file_name}.html", "rb") as f:
         html = f.read()
+        
+        # Save uncompressed HTML to data folder
+        with open(f"{output_folder}/{file_name}.html", "wb") as uncompressed_file:
+            uncompressed_file.write(html)
+        print(f"Uncompressed HTML saved to {output_folder}/{file_name}.html")
+        
+        # Compress and save
         compressed_html = gzip.compress(html)
-
-        with open(f"{output_folder}/{file_name}.html.gz", "wb") as f:
-            f.write(compressed_html)
+        with open(f"{output_folder}/{file_name}.html.gz", "wb") as compressed_file:
+            compressed_file.write(compressed_html)
     print(f"Compressed HTML saved to {output_folder}/{file_name}.html.gz")
     return compressed_html
 

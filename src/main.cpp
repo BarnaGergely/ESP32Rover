@@ -32,8 +32,8 @@
 #include <DRV8833MotorDriver.h>
 #include <ESPAsyncWebServer.h>
 #include <LedBlinker.h>
-#include <LittleFS.h>
 #include <NewPing.h>
+#include "index_html_gz.h"
 #include <RampFilter.h>
 #include <SimpleDebugLog.h>
 #include <SimpleWebSocketLog.h>
@@ -91,11 +91,6 @@ void setup() {
     if (setupDnsServer()) LOG_ERROR("DNS server setup failed.");
     server.begin();
 
-    // Mount the file system
-    if (!LittleFS.begin(true)) LOG_ERROR("LittleFS Mount Failed");
-    if (!LittleFS.exists("/index.html")) LOG_ERROR("index.html not found in LittleFS");
-    if (!LittleFS.exists("/index.html.gz")) LOG_ERROR("index.html.gz not found in LittleFS");
-
     // setup sensors
     pinMode(LEFT_GROUND_SENSOR_PIN, INPUT);
     pinMode(RIGHT_GROUND_SENSOR_PIN, INPUT);
@@ -136,14 +131,18 @@ void handlePingHttpRequest(AsyncWebServerRequest* request) {
 int setupWebServer() {
     LOG_INFO("Setting up web server");
 
-    server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) { request->redirect("/index.html"); });
-    server.serveStatic("/index.html", LittleFS, "/index.html");
+    // Serve compressed HTML from program memory
+    server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
+        AsyncWebServerResponse* response = request->beginResponse(200, "text/html", (const uint8_t*)index_html_gz, sizeof(index_html_gz));
+        response->addHeader("Content-Encoding", "gzip");
+        request->send(response);
+    });
     server.on("/ping", HTTP_GET, handlePingHttpRequest);
 
     // Serves index.html for any path that isn't already handled
     server.onNotFound([](AsyncWebServerRequest* request) {
         LOG_INFO("Redirecting to /index.html from ", request->url());
-        request->redirect("/index.html");
+        request->redirect("/");
     });
 
     return 0;
