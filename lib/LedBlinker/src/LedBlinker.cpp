@@ -36,7 +36,7 @@ void LedBlinker::enable() { _isLightingEnabled = true; }
 void LedBlinker::turnOn() {
     if (!_isLightingEnabled) return;
 
-    digitalWrite(_pin, HIGH);
+    digitalWrite(_pin, _inverted ? LOW : HIGH);
     _isLighting = true;
 #ifdef DEBUG
     Serial.println("Light turned on");
@@ -46,7 +46,7 @@ void LedBlinker::turnOn() {
 void LedBlinker::turnOff() {
     if (!_isLightingEnabled) return;
 
-    digitalWrite(_pin, LOW);
+    digitalWrite(_pin, _inverted ? HIGH : LOW);
     _isLighting = false;
 #ifdef DEBUG
     Serial.println("Light turned off");
@@ -97,7 +97,7 @@ void LedBlinker::begin() {
     _isReady = true;
 }
 
-LedBlinker::LedBlinker(int pin) : _pin(pin) {}
+LedBlinker::LedBlinker(int pin, bool inverted) : _pin(pin), _inverted(inverted) {}
 
 bool LedBlinker::isBlinkOneActive() { return _blinkOneDuration > 0; }
 bool LedBlinker::blinkContinuouslyActive() { return _blinkContinuouslyDuration > 0; }

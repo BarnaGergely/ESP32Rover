@@ -65,10 +65,11 @@ class LedBlinker {
      *
      * @param pin The pin number to which the LED is connected.
      */
-    LedBlinker(int pin);
+    LedBlinker(int pin, bool inverted = false);
 
    private:
     int _pin;
+    bool _inverted = false;
     bool _isReady = false;
 
     unsigned _blinkOneDuration = 0;
