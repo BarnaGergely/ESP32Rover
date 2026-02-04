@@ -1,9 +1,45 @@
-# asd
+# Simple ESP32 Rover
+
+TODO: Introduction
+
+## Quick Start
+
+1. **Connect to WiFi**: Find and connect your device to the `AwesomeRobot` WiFi network (no password required).
+2. **Open Browser**: Open any website in your browser—you'll be automatically redirected to the robot's control panel.
+   - Alternatively, navigate directly to `http://192.168.4.1/` if automatic redirection doesn't work.
+
+## Parts
+
+- ESP32
+- DRV8833
+- HC-SR04
+- LiPo or Li-in battery (eg. 18650)
+- Power Bank module
+
+## Pinout
+
+- D - Built-in LED
+- D - Right HW-201
+- D - Left HW-201
+- D - HC-SR04 Echo
+- D - HC-SR04 Trigger
+- D - DRV8833 IN1
+- D - DRV8833 IN2
+- D - DRV8833 IN3
+- D - DRV8833 IN4
+
+## Running gzip test server
+
+1. `npm install`
+2. `npm run gzipStart`
+
+## Wokwi
+
+- Build after every change
 
 ## Tasks
 
 - improve sensor UI
-- Fix Captive portal and DNS
 - fix enable by default joy center and scroll lock
   - fix: HTML merging removes checked from checkboxs
 - add falling warning
@@ -24,6 +60,7 @@
 
 ### DONE
 
+- Fix Captive Portal
 - Add sensors
 - add basic setting and log menu
 - on arduino when the server disconnects, the client don't recognise it. - Does not needed. In production it works.
@@ -42,20 +79,3 @@
 <https://lastminuteengineers.com/wemos-d1-mini-pinout-reference/>
 <https://lastminuteengineers.com/arduino-sr04-ultrasonic-sensor-tutorial/>
 <https://bitbucket.org/teckel12/arduino-new-ping/wiki/Home>
-
-## Pinout
-
-- D4 - Built-in LED
-- D3 - Right HW-201
-- D2 - Left HW-201
-- D1 - HC-SR04 Echo
-- D8 - HC-SR04 Trigger
-
-## Running gzip test server
-
-1. `npm install`
-2. `npm run gzipStart`
-
-## Wokwi
-
-- Build after every change
