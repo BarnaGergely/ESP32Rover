@@ -3,6 +3,7 @@
 #endif
 
 // #define DEBUGLOG_DISABLE_LOG  // Comment it out to disable all logs
+#define DEBUGLOG_DEFAULT_LOG_LEVEL_INFO
 
 #define WIFI_SSID "AwesomeRobot"
 #define WIFI_PASSWORD ""  // No password for open network
@@ -109,7 +110,7 @@ void loop() {
 
 // Function definitions
 int setupWifi() {
-    LOG_INFO("Setting up WiFi Access Point");
+    LOG_DEBUG("Setting up WiFi Access Point");
 
     if (!WiFi.softAP(WIFI_SSID, WIFI_PASSWORD)) {
         LOG_ERROR("Soft AP creation failed.");
@@ -129,7 +130,7 @@ void handlePingHttpRequest(AsyncWebServerRequest* request) {
 }
 
 int setupWebServer() {
-    LOG_INFO("Setting up web server");
+    LOG_DEBUG("Setting up web server");
 
     // Serve compressed HTML from program memory
     server.on("/", HTTP_GET, [](AsyncWebServerRequest* request) {
@@ -141,7 +142,7 @@ int setupWebServer() {
 
     // Serves index.html for any path that isn't already handled
     server.onNotFound([](AsyncWebServerRequest* request) {
-        LOG_INFO("Redirecting to /index.html from ", request->url());
+        LOG_INFO("Redirecting to / from ", request->url());
         request->redirect("/");
     });
 
@@ -149,7 +150,7 @@ int setupWebServer() {
 }
 
 int setupDnsServer() {
-    LOG_INFO("Setting up DNS server");
+    LOG_DEBUG("Setting up DNS server");
 
     // Check if myIP is setted correctly
     if (myIP == IPAddress()) {
@@ -163,8 +164,7 @@ int setupDnsServer() {
         LOG_ERROR("DNS server failed to start");
         return 1;
     }
-    LOG_INFO("DNS server started on port 53, redirecting all requests to ", myIP);
-    LOG_INFO("Any domain accessed on the network will resolve to ", myIP);
+    LOG_INFO("DNS server started on port 53");
     return 0;
 }
 
@@ -249,16 +249,18 @@ void onWebSocketEvent(AsyncWebSocket* server, AsyncWebSocketClient* client, AwsE
 }
 
 int setupWebSocketServer() {
-    LOG_INFO("Setting up WebSocket server");
+    LOG_DEBUG("Setting up WebSocket server");
     ws.onEvent(onWebSocketEvent);
 
     // Clean up disconnected clients every 2 seconds
     timer.every(2000, [](void*) {
         ws.cleanupClients();
+        LOG_TRACE("Cleaned up disconnected WebSocket clients");
         return true;  // return true to repeat the action
     });
 
     server.addHandler(&ws);
+    LOG_INFO("WebSocket server setup completed");
     return 0;
 }
 

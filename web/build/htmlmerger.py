@@ -69,6 +69,10 @@ class HtmlMerger(HTMLParser):
   def _keyValueToString(self, key, value):
     quote = "'"
 
+    # Handle boolean attributes (value is None)
+    if value is None:
+      return ' ' + key
+
     if (not value):
       return ''
 
